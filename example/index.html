@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>XHRLESS</title>
+<script type="text/javascript" src="../xhrless.js"></script>
+<style type="text/css">
+a { display:block; text-decoration:none; margin:2px 0px; }
+a:hover { text-decoration:underline; }
+div#ajaxdiv { border:solid 1px #888; }
+div.xhr_preloader { background-color:#DDD; }
+td { vertical-align:top; }
+td>p { margin:0.5em 0px; }
+</style>
+</head>
+<body>
+
+<div id="ajaxdiv">AJAX<br />response<br />here.<br />Some errors will be sent to console.</div>
+
+<script type="text/javascript">
+
+var q = 'ajax.php?q=',
+	node = document.getElementById('ajaxdiv'),
+	postData = new FormData();
+
+postData.append('q', ''+rnd());
+
+function rnd() {
+	return Math.floor((Math.random()*1e8));
+};
+
+function showError(xhr) {
+	node.innerHTML = '! Error: (' + xhr.errorState() + '): ' + xhr.errorState(true) + '<br /><br /><br /><br />';
+};
+
+function showText(xhr) {
+	node.innerHTML = xhr.responseText();
+};
+
+function jsonReady(xhr) {
+	node.innerHTML = '.response: ' + (typeof this.response()) + ' ' + JSON.stringify(this.response()) + "<br />\n" +
+		'.responseText: ' + (this.responseType() == '' ? typeof this.responseText() + ' ' + this.responseText() : '-') + "<br />\n" +
+		'Content-Type: ' + this.responseHeader('Content-Type') + "<br /><br />\n";
+};
+
+async function awaitResponseAndShow(url) {
+	try {
+		showText(await XHR(url).promise());
+	} catch (e) {
+		if (e instanceof XHR)
+			showError(e);
+		else
+			throw e;
+	};
+};
+
+XHR.prototype.setFormCT = function() {
+	return this.setHeader('Content-Type', 'application/x-www-form-urlencoded');
+};
+
+</script>
+
+<table><tr><td>
+
+<p>.loadInto():</p>
+<a href="javascript:XHR(q+rnd()).loadInto('#ajaxdiv');">XHR(url).loadInto(selector)</a>
+<a href="javascript:XHR(q+rnd()).loadInto(node, true);">XHR(url).loadInto(node, preload)</a>
+<a href="javascript:XHR().reset(q+rnd()).loadInto('#ajaxdiv', true);">XHR().reset(url).loadInto(selector, preload)</a>
+<a href="javascript:XHR().reset(q+rnd()).showPreloader(node).loadInto(node);">XHR().reset(url).showPreloader().loadInto(node)</a>
+<a href="javascript:XHR(q+rnd()).loadInto('#unexistent', false, 'Error');">XHR(url).loadInto(invalid, false, Error message): throws</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').loadInto(node, true, 'Page<br/>load<br/>error<br/><br/>');">XHR(404).loadInto(node, preload, Error message)</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').loadInto(node, true, xhr => 'Failed:<br/>'+xhr.errorState(true)+'<br/><br/><br/>');">XHR(404).loadInto(node, preload, function)</a>
+
+<p>.onReady().send():</p>
+<a href="javascript:XHR(q+rnd()).onReady(console.log).send();">XHR(url).onReady(console.log).send()</a>
+<a href="javascript:XHR(q+rnd()).onReady(function(){showText(this)}).showPreloader(node).send();">XHR(url).onReady(f(){showText(this)}).showPreloader().send()</a>
+<a href="javascript:XHR(q+rnd()).onReady(x=>showText(x)).showPreloader('#ajaxdiv').send();">XHR(url).onReady(x=>showText(x)).showPreloader().send()</a>
+<a href="javascript:XHR(q+rnd()).onReady(showText).showPreloader('#ajaxdiv').send();">XHR(url).onReady(showText).showPreloader().send()</a>
+<a href="javascript:XHR(q+rnd()).onReady(function(){this.isStatusOK()?showText(this):showError(this)}).send();">XHR(url).onReady(f(){isStatusOK()?showText(this):showError(this)}).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').onReady(function(){this.isStatusOK()?showText(this):showError(this)}).send();">XHR(404).onReady(f(){isStatusOK()?showText(this):showError(this)}).send()</a>
+<a href="javascript:XHR(q+rnd()).setTimeout(200).onTimeout(function(){alert('Timed out after '+this.xhr.timeout+'ms')}).loadInto(node, true, x=>'Timed<br/>out<br/>after<br/>'+x.xhr.timeout+'ms');">XHR(url).setTimeout().onTimeout(alert).loadInto(node,true,function)</a>
+
+<p>.onSuccess().send():</p>
+<a href="javascript:XHR(q+rnd()             ).onSuccess(function(){showText(this)}, function(){showError(this)}).send();">XHR(url).onSuccess(f(){showText(this)}, f(){showError(this)}).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(function(){showText(this)}, function(){showError(this)}).send();">XHR(404).onSuccess(f(){showText(this)}, f(){showError(this)}).send()</a>
+<a href="javascript:XHR(q+rnd()             ).onSuccess(        x=>showText(x),             x=>showError(x)    ).send();">XHR(url).onSuccess(x=>showText(x), x=>showError(x)).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(        x=>showText(x),             x=>showError(x)    ).send();">XHR(404).onSuccess(x=>showText(x), x=>showError(x)).send()</a>
+<a href="javascript:XHR(q+rnd()             ).onSuccess(           showText,                   showError       ).send();">XHR(url).onSuccess(showText, showError).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(           showText,                   showError       ).send();">XHR(404).onSuccess(showText, showError).send()</a>
+<a href="javascript:XHR(q+rnd()             ).onSuccess(                                                       ).send();">XHR(url).onSuccess().send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(                                                       ).send();">XHR(404).onSuccess().send()</a>
+
+<p>With POST:</p>
+<a href="javascript:XHR(q+rnd(), 'q='+rnd()).setFormCT().loadInto(node);">XHR(url, POST string).loadInto()</a>
+<a href="javascript:XHR(q+rnd(), postData).loadInto(node);">XHR(url, FormData).loadInto()</a>
+<a href="javascript:XHR(q+rnd())                               .onSuccess(showText, showError).send(postData);">XHR(url).onSuccess(showText, showError).send(FormData);</a>
+<a href="javascript:XHR().reset(q+rnd(), postData)             .onSuccess(showText, showError).send();">XHR().reset(url, FormData).onSuccess(showText, showError).send();</a>
+<a href="javascript:XHR().reset(q+rnd()+'&amp;error', postData).onSuccess(showText, showError).send();">XHR().reset(404, FormData).onSuccess(showText, showError).send();</a>
+
+</td><td>
+
+<p>.responseType('json').onReady().send():</p>
+<a href="javascript:XHR(q+rnd()+'&amp;json').responseType('json').onReady(jsonReady).send();">XHR(url_json).responseType('json').onReady(show).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;json', postData).responseType('json').onReady(jsonReady).send();">XHR(url_json, FormData).responseType('json').onReady(show).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;json').onReady(jsonReady).send();">XHR(url_json).onReady(show).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;json&amp;invalid').responseType('json').onReady(jsonReady).send();">XHR(url_json_invalid).responseType('json').onReady(show).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').responseType('json').onReady(jsonReady).send();">XHR(404).responseType('json').onReady(show).send()</a>
+
+<p>.responseType('json').onSuccess().send():</p>
+<a href="javascript:XHR(q+rnd()+'&amp;json').responseType('json').onSuccess(jsonReady, showError).send();">XHR(url_json).responseType('json').onSuccess(show, showError).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;json', postData).responseType('json').onSuccess(jsonReady, showError).send();">XHR(url_json, FormData).responseType('json').onSuccess(show, showError).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;json').onSuccess(jsonReady, showError).send();">XHR(url_json).onSuccess(show, showError).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;json&amp;invalid').responseType('json').onSuccess(jsonReady, showError).send();">XHR(url_json_invalid).responseType('json').onSuccess(show, showError).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').responseType('json').onSuccess(jsonReady, showError).send();">XHR(404).responseType('json').onSuccess(show, showError).send()</a>
+
+<p>.promise().then().catch():</p>
+<a href="javascript:XHR(q+rnd())             .promise().then(function(x){showText(x)}).catch(function(x){showError(x)});">XHR(url).promise().then(f(x){showText(x)}).catch(f(x){showError(x)})</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').promise().then(function(x){showText(x)}).catch(function(x){showError(x)});">XHR(404).promise().then(f(x){showText(x)}).catch(f(x){showError(x)})</a>
+<a href="javascript:XHR(q+rnd())             .promise().then(x=>showText(x))          .catch(x=>showError(x));">XHR(url).promise().then(x=>showText(x)).catch(x=>showError(x))</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').promise().then(x=>showText(x))          .catch(x=>showError(x));">XHR(404).promise().then(x=>showText(x)).catch(x=>showError(x))</a>
+<a href="javascript:XHR(q+rnd(), postData)   .promise().then(showText)                .catch(showError);">XHR(url, postData).promise().then(showText).catch(showError)</a>
+<a href="javascript:XHR(q+rnd()).promise(postData)     .then(showText)                .catch(showError);">XHR(url).promise(postData).then(showText).catch(showError)</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').promise();">XHR(404).promise() (throws)</a>
+
+<p>.promise(), async/await:</p>
+<a href="javascript:awaitResponseAndShow(q+rnd(),            );">try { await XHR(url).promise(); showText(); } catch { showError(); }</a>
+<a href="javascript:awaitResponseAndShow(q+rnd()+'&amp;error');">try { await XHR(404).promise(); showText(); } catch { showError(); }</a>
+
+<p>.setData(), .setHeader():</p>
+<a href="javascript:XHR(q+rnd()).setData('one', 1).setData('two', 2).setData('three', 3).setData('two').onReady(function(xhr) {node.innerHTML = JSON.stringify(this.data);}).send();">XHR(url).setData()...onReady(print .data).send(): '{one:1,three:3}'</a>
+<a href="javascript:XHR(q+rnd()+'&amp;headers').setHeader('X-One', '1').setHeader('X-Two', '2').setHeader('X-Three', '3').setHeader('X-Two').onSuccess(showText, showError).send();">XHR(url).setHeader()...send(): X-One:1 X-Three:3</a>
+
+<p>.setCookie(), .setCookies() (does not work in browser):</p>
+<a href="javascript:XHR(q+rnd()+'&amp;cookies').setCookie('C-One', '1').setCookie('C-Two', '').setCookie('C-Three', '3').onSuccess(showText, showError).send();">XHR(url).setCookie()...send(): C-One=1 C=Three=3</a>
+<a href="javascript:XHR(q+rnd()+'&amp;cookies').setCookies({'C-One':'1','C-Two':'','C-Three':'3'}).onSuccess(showText, showError).send();">XHR(url).setCookies({...})...send(): C-One=1 C=Three=3</a>
+<a href="javascript:XHR(q+rnd()+'&amp;cookies').setCookies({'C-One':'1'}).setCookies().onSuccess(showText, showError).send();">XHR(url).setCookies({...}).setCookies()...send()</a>
+
+</td></tr></table>
+
+</body>
+</html>
