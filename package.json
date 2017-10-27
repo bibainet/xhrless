@@ -1,15 +1,15 @@
 {
 	"name": "xhrless",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Write less, do more with XMLHttpRequest API. It is an abstraction layer over the XMLHttpRequest v2 API for browser/Node.JS environments.",
-	"author": "Alexander Bibanin (https://github.com/bibainet/)",
+	"author": "Alexander Bibanin <32kb@bk.ru> (https://github.com/bibainet/)",
 	"homepage": "https://github.com/bibainet/xhrless/",
 	"browser": "xhrless.js",
 	"dependencies": {
 		"xhr2": ">= 0.1.4"
 	},
 	"engines": {
-		"node": ">= 8.0"
+		"node": ">= 8.0.0"
 	},
 	"keywords": ["xhr", "xmlhttprequest", "ajax", "http", "browser"],
 	"license": "MIT",
