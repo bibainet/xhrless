@@ -109,9 +109,9 @@
 		if (ENV_NODEJS) {
 			// Load "xhr2" module implementing XMLHttpRequest v2 API for Node.JS
 			// @ts-ignore
-			XMLHttpRequest = require('xhr2'); // Omiting var keyword: inherit global XMLHttpRequest when in browser API
+			XMLHttpRequest = require('xhr2'); // Omiting var keyword to avoid hoisting: inherit global XMLHttpRequest when in browser API
 			// @ts-ignore
-			['cookie', 'cookie2', 'referer', 'user-agent'].forEach(name => delete(XMLHttpRequest.prototype._restrictedHeaders[name]));
+			(typeof XMLHttpRequest.prototype._restrictedHeaders == 'object') && ['cookie', 'cookie2', 'referer', 'user-agent'].forEach(name => delete(XMLHttpRequest.prototype._restrictedHeaders[name]));
 		} else {
 			throw new Error('XMLHttpRequest is not defined in this environment');
 		};
