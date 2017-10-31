@@ -47,6 +47,7 @@ const examples = [
 	()=>XHR(url).onReady(function(){showText(this)}).send(),
 	()=>XHR(url).onReady(x=>showText(x)).send(),
 	()=>XHR(url).onReady(showText).send(),
+	()=>XHR(url).onReady(showText).onReady().send(),
 	()=>XHR(url).onReady(function(){this.isStatusOK()?showText(this):showError(this)}).send(),
 	()=>XHR(url_error).onReady(function(){this.isStatusOK()?showText(this):showError(this)}).send(),
 	()=>XHR(url).setTimeout(200).onTimeout(function(){console.log('Timed out after '+this.xhr.timeout+'ms')}).send(),
@@ -58,8 +59,11 @@ const examples = [
 	()=>XHR(url_error).onSuccess(        x=>showText(x),             x=>showError(x)    ).send(),
 	()=>XHR(url      ).onSuccess(           showText,                   showError       ).send(),
 	()=>XHR(url_error).onSuccess(           showText,                   showError       ).send(),
+	()=>XHR(url      ).onSuccess(           showText                                    ).send(),
+	()=>XHR(url_error).onSuccess(             null,                     showError       ).send(),
 	()=>XHR(url      ).onSuccess(                                                       ).send(),
 	()=>XHR(url_error).onSuccess(                                                       ).send(),
+	()=>XHR(url      ).onSuccess(           showText,       showError       ).onSuccess().send(),
 
 	// With POST
 	()=>XHR(url, 'q=1234').setFormCT()        .onSuccess(showText, showError).send(),

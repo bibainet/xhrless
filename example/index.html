@@ -77,6 +77,7 @@ XHR.prototype.setFormCT = function() {
 <a href="javascript:XHR(q+rnd()).onReady(function(){showText(this)}).showPreloader(node).send();">XHR(url).onReady(f(){showText(this)}).showPreloader().send()</a>
 <a href="javascript:XHR(q+rnd()).onReady(x=>showText(x)).showPreloader('#ajaxdiv').send();">XHR(url).onReady(x=>showText(x)).showPreloader().send()</a>
 <a href="javascript:XHR(q+rnd()).onReady(showText).showPreloader('#ajaxdiv').send();">XHR(url).onReady(showText).showPreloader().send()</a>
+<a href="javascript:XHR(q+rnd()).onReady(showText).onReady().send();">XHR(url).onReady(showText).onReady().send()</a>
 <a href="javascript:XHR(q+rnd()).onReady(function(){this.isStatusOK()?showText(this):showError(this)}).send();">XHR(url).onReady(f(){isStatusOK()?showText(this):showError(this)}).send()</a>
 <a href="javascript:XHR(q+rnd()+'&amp;error').onReady(function(){this.isStatusOK()?showText(this):showError(this)}).send();">XHR(404).onReady(f(){isStatusOK()?showText(this):showError(this)}).send()</a>
 <a href="javascript:XHR(q+rnd()).setTimeout(200).onTimeout(function(){alert('Timed out after '+this.xhr.timeout+'ms')}).loadInto(node, true, x=>'Timed<br/>out<br/>after<br/>'+x.xhr.timeout+'ms');">XHR(url).setTimeout().onTimeout(alert).loadInto(node,true,function)</a>
@@ -88,8 +89,11 @@ XHR.prototype.setFormCT = function() {
 <a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(        x=>showText(x),             x=>showError(x)    ).send();">XHR(404).onSuccess(x=>showText(x), x=>showError(x)).send()</a>
 <a href="javascript:XHR(q+rnd()             ).onSuccess(           showText,                   showError       ).send();">XHR(url).onSuccess(showText, showError).send()</a>
 <a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(           showText,                   showError       ).send();">XHR(404).onSuccess(showText, showError).send()</a>
+<a href="javascript:XHR(q+rnd()             ).onSuccess(           showText                                    ).send();">XHR(url).onSuccess(showText).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(             null,                     showError       ).send();">XHR(404).onSuccess(null, showError).send()</a>
 <a href="javascript:XHR(q+rnd()             ).onSuccess(                                                       ).send();">XHR(url).onSuccess().send()</a>
 <a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(                                                       ).send();">XHR(404).onSuccess().send()</a>
+<a href="javascript:XHR(q+rnd()             ).onSuccess(           showText,        showError      ).onSuccess().send();">XHR(url).onSuccess(showText, showError).onSuccess().send()</a>
 
 <p>With POST:</p>
 <a href="javascript:XHR(q+rnd(), 'q='+rnd()).setFormCT().loadInto(node);">XHR(url, POST string).loadInto()</a>

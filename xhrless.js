@@ -290,30 +290,39 @@
 	 * The first argument for any callback is also an `XHR` instance (the same as `this`).
 	 * It allows the caller to use promises and arrow functions where `this` reference is always inherited from the caller scope.
 	 * 
-	 * The handlers set with `this.onChange`, `this.onReady`, `this.onSuccess`, `this.promise` will overwrite each other,
-	 * because all of them are internally assigned to `this.xhr.onreadystatechange`.
+	 * The handlers set with `.onChange`, `.onReady`, `.onSuccess`, `.promise` will overwrite each other, because all of them are
+	 * internally assigned to `this.xhr.onreadystatechange`.
 	 */
 
 	/**
-	 * Set request timeout event handler (this.xhr.ontimeout)
+	 * Set/clear request timeout event handler (`this.xhr.ontimeout`)
 	 * 
+	 * > See XHR.prototype.setTimeout().
+	 * 
+	 * @example
 	 * ```javascript
 	 * XHR(url).setTimeout(5e3).onTimeout(function(xhr) {
 	 *   alert('Request timed out after '+this.xhr.timeout+'ms');
 	 * }).loadInto(node);
 	 * ```
-	 * @param {function(XHR)} handler
+	 * @param {function(XHR)} [handler]
 	 * @return {XHR} this
 	 */
 	XHR.prototype.onTimeout = function(handler) {
-		this.xhr.ontimeout = (event) => (typeof handler == 'function') && handler.call(this, this);
+		if (typeof handler == 'function')
+			this.xhr.ontimeout = (event) => handler.call(this, this);
+		else
+			this.xhr.ontimeout = null;
 		return this;
 	};
 
 	/**
-	 * Set this.xhr.onreadystatechange event handler.
-	 * The handler will be called several times during request, every time when the this.xhr.readyState changed.
+	 * Set/clear `this.xhr.onreadystatechange` event handler.
+	 * The handler will be called several times during request, every time when the `this.xhr.readyState` changed.
 	 * 
+	 * > See XHR.prototype.onReady().
+	 * 
+	 * @example
 	 * ```javascript
 	 * XHR(url).onChange(function(xhr) {
 	 *   // Request is in progress
@@ -325,18 +334,24 @@
 	 *       console.warn('Failed');
 	 * }).send();
 	 * ```
-	 * @param {function(XHR)} handler
+	 * @param {function(XHR)} [handler]
 	 * @return {XHR} this
 	 */
 	XHR.prototype.onChange = function(handler) {
-		this.xhr.onreadystatechange = (event) => (typeof handler == 'function') && handler.call(this, this);
+		if (typeof handler == 'function')
+			this.xhr.onreadystatechange = (event) => handler.call(this, this);
+		else
+			this.xhr.onreadystatechange = null;
 		return this;
 	};
 
 	/**
-	 * Set this.xhr.onreadystatechange event handler for this.xhr.readyState == XMLHttpRequest.DONE event.
+	 * Set/clear `this.xhr.onreadystatechange` event handler for `this.xhr.readyState` == `XMLHttpRequest.DONE` event.
 	 * The nandler will be called once when the request completes/fails, regardless of errors.
 	 * 
+	 * > See XHR.prototype.onSuccess().
+	 * 
+	 * @example
 	 * ```javascript
 	 * XHR(url).onReady(xhr => {
 	 *   // Request completed, regardless of errors
@@ -346,21 +361,25 @@
 	 *     console.warn('Failed');
 	 * }).send();
 	 * ```
-	 * @param {function(XHR)} handler
+	 * @param {function(XHR)} [handler]
 	 * @return {XHR} this
 	 */
 	XHR.prototype.onReady = function(handler) {
-		this.xhr.onreadystatechange = (event) => this.isCompleted() && (typeof handler == 'function') && handler.call(this, this);
+		if (typeof handler == 'function')
+			this.xhr.onreadystatechange = (event) => this.isCompleted() && handler.call(this, this);
+		else
+			this.xhr.onreadystatechange = null;
 		return this;
 	};
 
 	/**
-	 * Set this.xhr.onreadystatechange event handlers for this.xhr.readyState == XMLHttpRequest.DONE event.
+	 * Set/clear `this.xhr.onreadystatechange` event handlers for `this.xhr.readyState` == `XMLHttpRequest.DONE` event.
 	 * For success responses the successHandler(this) will be called. For error responses the errorHandler(this) will be called.
 	 * Both successHandler and errorHandler can be omitted.
 	 * 
-	 * > See this.isSuccessResponse() for more.
+	 * > See XHR.prototype.isSuccessResponse() for more.
 	 * 
+	 * @example
 	 * ```javascript
 	 * XHR(url).onSuccess(function(xhr) {
 	 *   // Request completed successfully
@@ -375,12 +394,20 @@
 	 * @return {XHR} this
 	 */
 	XHR.prototype.onSuccess = function(successHandler, errorHandler) {
-		this.xhr.onreadystatechange = (event) => {
-			if (this.isCompleted())
-				if (this.isSuccessResponse())
-					(typeof successHandler == 'function') && successHandler.call(this, this);
-				else
-					(typeof errorHandler   == 'function') && errorHandler.call(this, this);
+		if ((typeof successHandler == 'function') && (typeof errorHandler == 'function')) {
+			this.xhr.onreadystatechange = (event) => {
+				if (this.isCompleted())
+					if (this.isSuccessResponse())
+						successHandler.call(this, this);
+					else
+						errorHandler.call(this, this);
+			};
+		} else if (typeof successHandler == 'function') {
+			this.xhr.onreadystatechange = (event) => this.isCompleted() && this.isSuccessResponse() && successHandler.call(this, this);
+		} else if (typeof errorHandler == 'function') {
+			this.xhr.onreadystatechange = (event) => this.isCompleted() && !this.isSuccessResponse() && errorHandler.call(this, this);
+		} else {
+			this.xhr.onreadystatechange = null;
 		};
 		return this;
 	};
@@ -388,16 +415,17 @@
 	/**
 	 * Send request and return the Promise.
 	 * The promise will be resolved when request is succeeded. It will be rejected for error responses.
-	 * The XHR instance (this) will be passed as first argument to resolve/reject callbacks.
+	 * The XHR instance (`this`) will be passed as first argument to resolve/reject callbacks.
 	 * 
-	 * > See this.send() and this.isSuccessResponse() for more.
+	 * > See XHR.prototype.send() and XHR.prototype.isSuccessResponse() for more.
 	 * 
+	 * @example
 	 * ```javascript
 	 * XHR(url).promise()
 	 *   .then(  xhr => console.log(xhr.response()) )
 	 *   .catch( xhr => console.warn(xhr.url, xhr.errorState(true)) );
 	 * ```
-	 * @param {*} [postData]
+	 * @param {*} [postData] The POST body to send with request, if any. It will be used instead of `this.postData`.
 	 * @return {Promise}
 	 */
 	XHR.prototype.promise = function(postData) {
