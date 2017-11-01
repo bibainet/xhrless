@@ -299,7 +299,7 @@
 	XHR.prototype.setCookies = function(cookies) {
 		var encoded = [];
 		if (typeof cookies == 'object')
-			for (let name in cookies)
+			for (var name in cookies)
 				if (cookies.hasOwnProperty(name) && (typeof cookies[name] == 'string') && cookies[name].length)
 					encoded.push(name + '=' + encodeURIComponent(cookies[name]));
 		if (encoded.length)
@@ -573,11 +573,11 @@
 			throw new Error('The request URL is empty');
 		} else if (postData || this.postData) {
 			this.xhr.open(this.method || 'POST', this.url, true, this.userName, this.password);
-			for (let key in this.headers) this.xhr.setRequestHeader(key, this.headers[key]);
+			for (var key in this.headers) this.xhr.setRequestHeader(key, this.headers[key]);
 			this.xhr.send(postData || this.postData);
 		} else {
 			this.xhr.open(this.method || 'GET', this.url, true, this.userName, this.password);
-			for (let key in this.headers) this.xhr.setRequestHeader(key, this.headers[key]);
+			for (var key in this.headers) this.xhr.setRequestHeader(key, this.headers[key]);
 			this.xhr.send();
 		};
 		return this;
