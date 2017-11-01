@@ -98,14 +98,20 @@ const examples = [
 	()=>awaitResponseAndShow(url),
 	()=>awaitResponseAndShow(url_error),
 
-	// .setData(), .setHeader()
-	()=>XHR(url).setData('one', 1).setData('two', 2).setData('three', 3).setData('two').onReady(x=>console.log(JSON.stringify(x.data))).send(),
-	()=>XHR(url_headers).setHeader('X-One', '1').setHeader('X-Two', '2').setHeader('X-Three', '3').setHeader('X-Two').onSuccess(showText, showError).send(),
+	// .abort()
+	()=>XHR(url).onChange(x=>{if (x.readyState()==2) x.abort(); if (x.readyState()==4) if (x.isSuccessResponse()) showText(x); else showError(x);}).send(),
+	()=>{var x=XHR(url).onSuccess(showText, showError).send(); setTimeout(()=>x.abort(), 200);},
+
+	// .setData(), .setHeader(), .setHeaders(), .responseHeaders(), .responseHeader()
+	()=>XHR(url).setData('one', 1).setData('two', 2).setData('three', 3).setData('two').onReady(x=>console.log(JSON.stringify(x.data))).send(), // '{one:1,three:3}'
+	()=>XHR(url_headers).setHeader('X-One', '1').setHeader('X-Two', '2').setHeader('X-Three', '3').setHeader('X-Two').onSuccess(showText, showError).send(), // X-One:1 X-Three:3
+	()=>XHR(url_headers).setHeaders({'X-One':'1','X-Two':'','X-Three':'3'}).onSuccess(showText, showError).send(), // X-One:1 X-Three:3
+	()=>XHR(url).onSuccess(x=>console.log(x.responseHeaders()+"\n\n"+JSON.stringify(x.responseHeaders(true))+"\n\nCT: "+x.responseHeader('Content-type')), showError).send(),
 
 	// .setCookie(), .setCookies() (does not work in browser)
-	()=>XHR(url_cookies).setCookie('C-One', '1').setCookie('C-Two', '').setCookie('C-Three', '3').onSuccess(showText, showError).send(),
-	()=>XHR(url_cookies).setCookies({'C-One':'1','C-Two':'','C-Three':'3'}).onSuccess(showText, showError).send(),
-	()=>XHR(url_cookies).setCookies({'C-One':'1'}).setCookies().onSuccess(showText, showError).send(),
+	()=>XHR(url_cookies).setCookie('C-One', '1').setCookie('C-Two', '').setCookie('C-Three', '3').onSuccess(showText, showError).send(), // C-One=1 C-Three=3
+	()=>XHR(url_cookies).setCookies({'C-One':'1','C-Two':'','C-Three':'3'}).onSuccess(showText, showError).send(), // C-One=1 C-Three=3
+	()=>XHR(url_cookies).setCookies({'C-One':'1'}).setCookies().onSuccess(showText, showError).send(), // empty
 
 ];
 

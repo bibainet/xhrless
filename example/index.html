@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>XHRLESS</title>
+<title>XHRLESS examples</title>
 <script type="text/javascript" src="../xhrless.js"></script>
 <style type="text/css">
 a { display:block; text-decoration:none; margin:2px 0px; }
@@ -11,7 +11,7 @@ a:hover { text-decoration:underline; }
 div#ajaxdiv { border:solid 1px #888; }
 div.xhr_preloader { background-color:#DDD; }
 td { vertical-align:top; }
-td>p { margin:0.5em 0px; }
+td>p { margin:0.5em 0px 0; }
 </style>
 </head>
 <body>
@@ -131,14 +131,20 @@ XHR.prototype.setFormCT = function() {
 <a href="javascript:awaitResponseAndShow(q+rnd(),            );">try { await XHR(url).promise(); showText(); } catch { showError(); }</a>
 <a href="javascript:awaitResponseAndShow(q+rnd()+'&amp;error');">try { await XHR(404).promise(); showText(); } catch { showError(); }</a>
 
-<p>.setData(), .setHeader():</p>
+<p>.abort():</p>
+<a href="javascript:XHR(q+rnd()).onChange(x=>{if (x.readyState()==2) x.abort(); if (x.readyState()==4) if (x.isSuccessResponse()) showText(x); else showError(x);}).send();">XHR(url).onChange(x=>x.abort();showText(x)).send()</a>
+<a href="javascript:var x=XHR(q+rnd()).onSuccess(showText, showError).send(); setTimeout(()=>x.abort(), 200);">x=XHR(url).onSuccess(showText, showError).send(); ... x.abort();</a>
+
+<p>.setData(), .setHeader(), .setHeaders(), .responseHeaders(), .responseHeader():</p>
 <a href="javascript:XHR(q+rnd()).setData('one', 1).setData('two', 2).setData('three', 3).setData('two').onReady(function(xhr) {node.innerHTML = JSON.stringify(this.data);}).send();">XHR(url).setData()...onReady(print .data).send(): '{one:1,three:3}'</a>
 <a href="javascript:XHR(q+rnd()+'&amp;headers').setHeader('X-One', '1').setHeader('X-Two', '2').setHeader('X-Three', '3').setHeader('X-Two').onSuccess(showText, showError).send();">XHR(url).setHeader()...send(): X-One:1 X-Three:3</a>
+<a href="javascript:XHR(q+rnd()+'&amp;headers').setHeaders({'X-One':'1','X-Two':'','X-Three':'3'}).onSuccess(showText, showError).send();">XHR(url).setHeaders({...}).send(): X-One:1 X-Three:3</a>
+<a href="javascript:XHR(q+rnd()).onSuccess(x=>{node.innerHTML=x.responseHeaders()+'<br/>'+JSON.stringify(x.responseHeaders(true))+'<br/>CT: '+x.responseHeader('Content-type');}, showError).send();">XHR(url).onSuccess(showResponseHeaders).send()</a>
 
 <p>.setCookie(), .setCookies() (does not work in browser):</p>
-<a href="javascript:XHR(q+rnd()+'&amp;cookies').setCookie('C-One', '1').setCookie('C-Two', '').setCookie('C-Three', '3').onSuccess(showText, showError).send();">XHR(url).setCookie()...send(): C-One=1 C=Three=3</a>
-<a href="javascript:XHR(q+rnd()+'&amp;cookies').setCookies({'C-One':'1','C-Two':'','C-Three':'3'}).onSuccess(showText, showError).send();">XHR(url).setCookies({...})...send(): C-One=1 C=Three=3</a>
-<a href="javascript:XHR(q+rnd()+'&amp;cookies').setCookies({'C-One':'1'}).setCookies().onSuccess(showText, showError).send();">XHR(url).setCookies({...}).setCookies()...send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;cookies').setCookie('C-One', '1').setCookie('C-Two', '').setCookie('C-Three', '3').onSuccess(showText, showError).send();">XHR(url).setCookie()...send(): C-One=1 C-Three=3</a>
+<a href="javascript:XHR(q+rnd()+'&amp;cookies').setCookies({'C-One':'1','C-Two':'','C-Three':'3'}).onSuccess(showText, showError).send();">XHR(url).setCookies({...})...send(): C-One=1 C-Three=3</a>
+<a href="javascript:XHR(q+rnd()+'&amp;cookies').setCookies({'C-One':'1'}).setCookies().onSuccess(showText, showError).send();">XHR(url).setCookies({...}).setCookies()...send(): empty</a>
 
 </td></tr></table>
 

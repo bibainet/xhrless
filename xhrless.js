@@ -252,6 +252,21 @@
 	};
 
 	/**
+	 * Copy name-value pairs from headers object into `this.headers`, non empty strings only.
+	 * All predefined headers will always be removed before copying.
+	 * @param {object} [headers]
+	 * @return {XHR} this
+	 */
+	XHR.prototype.setHeaders = function(headers) {
+		this.headers = {};
+		if (typeof headers == 'object')
+			for (var name in headers)
+				if (headers.hasOwnProperty(name) && (typeof headers[name] == 'string') && headers[name].length)
+					this.headers[name] = headers[name];
+		return this;
+	};
+
+	/**
 	 * Append cookie to the "Cookie" request header (`this.headers["Cookie"]`).
 	 * Both name and value should be a non empty string.
 	 * 
@@ -474,11 +489,30 @@
 	};
 
 	/**
-	 * Get all response headers separated by CRLF
-	 * @return {string} this.xhr.getAllResponseHeaders()
+	 * Get all response headers (`this.xhr.getAllResponseHeaders()`).
+	 * Depending on the value of asObject it returns string separated by CRLF or object like {"Key":["Value",],}.
+	 * @param {boolean} [asObject]
+	 * @return {string|object}
 	 */
-	XHR.prototype.responseHeaders = function() {
-		return this.xhr.getAllResponseHeaders();
+	XHR.prototype.responseHeaders = function(asObject) {
+		if (!asObject)
+			return this.xhr.getAllResponseHeaders();
+		var list = this.xhr.getAllResponseHeaders().split("\n"),
+			hash = {}, key = '', val = '', sep = 0;
+		for (var i = 0, l = list.length; i < l; ++i) {
+			sep = list[i].indexOf(':');
+			if (sep > 0) {
+				key = list[i].substr(0,sep).trim();
+				val = list[i].substr(sep+1).trim();
+				if (key.length && val.length) {
+					if (hash.hasOwnProperty(key))
+						hash[key].push(val);
+					else
+						hash[key] = [val];
+				};
+			};
+		};
+		return hash;
 	};
 
 	/**
