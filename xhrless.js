@@ -29,66 +29,69 @@
  * ```
  * 
  * 
- * ## Usage and examples ##
+ * ## Usage examples ##
  * 
  * The only exported name is `XHR`, the constructor function. It returns the `XHR` instance.
  * It can be called as `new XHR(...)` or just as `XHR(...)`, in which case the result of `new XHR(...)` will be returned transparently.
  * Mostly all of the methods of XHR prototype returns the reference to `XHR` (`this`), so the method calls can easily be chained:
  * `xhr = XHR(...).setHeader(...).responseType(...).onSuccess(...).send();`.
  * 
+ * @example
  * ```javascript
- * XHR(url).setHeader('X-Test', 'OK').onReady(function(xhr) {
+ * XHR(url).setHeader('X-Test', 'OK').setTimeout(5e3).onTimeout(function(xhr) {
+ *   alert('Request timed out');
+ * }).onReady(function(xhr) {
  *   // Request completed, regardless of errors
- *   if (this.isSuccessResponse())
+ *   if (this.isSuccessResponse()) // Check errors
  *     console.log('OK:', this.responseText());
  *   else
- *     console.warn(this.url, this.errorState(true));
- * }).send(new FormData());
+ *     console.warn('Failed:', this.url, this.errorState(true));
+ * }).send(new FormData(document.querySelector('form')));
  * 
- * XHR(url, new FormData(), 'PUT').httpAuth(config.userName, config.password).onSuccess(xhr => {
+ * XHR(url, new FormData(form), 'POST').setData('reqTime', new Date()).onSuccess(xhr => {
  *   // Request completed successfully
- *   console.log(xhr.response());
+ *   console.log('OK:', xhr.response());
  * }, xhr => {
  *   // Something failed
- *   console.warn(xhr.url, xhr.errorState(true));
+ *   console.warn('Failed:', xhr.url, xhr.errorState(true));
+ * }, xhr => {
+ *   // Finally:
+ *   submitButton.disabled = false;
+ *   console.log((new Date()) - xhr.data.reqTime, 'msec');
  * }).send();
  * ```
  * 
  * ### Fetch JSON ###
  * 
  * Call `.responseType('json')` on `XHR` instance before sending request.
- * Call `.response()` to get the decoded response object.
+ * When completed, call `.response()` to get the decoded response object.
  * 
+ * @example
  * ```javascript
- * XHR(url_json).responseType('json').setData('reqTime', new Date()).onSuccess(function(xhr) {
- *   console.log(typeof this.response(), this.response());
- * }, function(xhr) {
- *   console.warn(this.data.reqTime, this.url, this.errorState(true));
+ * XHR(url_json).responseType('json').onSuccess(function success(xhr) {
+ *   console.log('OK:', typeof this.response(), this.response());
+ * }, function error(xhr) {
+ *   console.warn('Failed:', this.url, this.errorState(true));
  * }).send();
  * ```
  * 
  * ### Using promises ###
  *
- * Call `.promise()` instead of `.send()`.
+ * Call `.promise()` instead of `.send()` to send the request and get the `Promise` object.
+ * It will be resolved when request succeeded. It will be rejected for error responses.
  * 
+ * @example
  * ```javascript
  * XHR(url).promise()
- *   .then(  xhr => console.log(xhr.response()) )
- *   .catch( xhr => console.warn(xhr.url, xhr.errorState(true)) );
- * ```
- * 
- * ### Methods that work only in browser ###
- * 
- * ```javascript
- * XHR(url).showPreloader(node).loadInto(node);
- * XHR(url).loadInto(node, true, 'Request failed');
- * XHR(url).loadInto(node, true, xhr => 'Error: ' + xhr.errorState(true));
+ *   .then(  xhr => console.log('OK:', xhr.responseText()) )
+ *   .catch( xhr => console.warn('Failed:', xhr.url, xhr.errorState(true)) );
  * ```
  * 
  * ### XHR instances are reusable ###
  * 
  * The `XHR` instance, once created, can be reused several times.
  * 
+ * @example
  * ```javascript
  * // Create and configure the XHR instance
  * const req = XHR().onReady(handler).setTimeout(5e3).setHeader('X-Test', 'OK');
@@ -96,6 +99,18 @@
  * req.reset(url).send(body1);
  * // Send another POST
  * req.send(body2);
+ * ```
+ * 
+ * ### Methods that works in browser only ###
+ * 
+ * Call `.loadInto()` to quickly load the response text into the DOM element.
+ * 
+ * @example
+ * ```javascript
+ * XHR(url).loadInto(document.querySelector('#target'));
+ * XHR(url).showPreloader(node).loadInto(node);
+ * XHR(url).loadInto('#target', true, 'Request failed');
+ * XHR(url).loadInto(node, true, xhr => 'Error: ' + xhr.errorState(true));
  * ```
  * 
  * 
@@ -132,6 +147,14 @@
 	 * 
 	 * All arguments are optional, so they can be set later by calling `XHR.prototype.reset()`.
 	 * 
+	 * @example
+	 * ```javascript
+	 * XHR(url).send();
+	 * XHR(url, 'data', 'PUT').send();
+	 * XHR().reset(url).send();
+	 * var form = document.querySelector('form');
+	 * XHR(form.action, new FormData(form)).send();
+	 * ```
 	 * @param {string} [url]      Request URL
 	 * @param {*}      [postData] The POST body to send with request, if any. See `XHR.prototype.send()`.
 	 * @param {string} [method]   Custom request method
@@ -654,6 +677,11 @@
 		 * > Requires browser API.
 		 * > XMLHttpRequest.responseText property is only available when XMLHttpRequest.responseType is "text" or empty.
 		 * 
+		 * @example
+		 * ```javascript
+		 * XHR(url).loadInto(document.querySelector('#target'), true, 'Request failed');
+		 * XHR(url).loadInto('#target', true, xhr => 'Error: ' + xhr.errorState(true));
+		 * ```
 		 * @param {Element|string} node element object or CSS selector string
 		 * @param {boolean} [showPreloader] call `this.showPreloader(node)` before request
 		 * @param {string|function(XHR)} [onError] will be used if request fails
