@@ -3,7 +3,7 @@
  * 
  * It is an abstraction layer over the **XMLHttpRequest** v2 API for browser/Node.JS environments.
  * 
- * @version    1.0.3 2017.11.01
+ * @version    1.0.4 2017.11.03
  * @license    MIT
  * @copyright  Copyright © 2017 Alexander Bibanin https://github.com/bibainet
  * 
@@ -492,7 +492,7 @@
 	};
 
 	// =========================================================================
-	/** ## The wrappers for XMLHttpRequest properties and methods ## */
+	/** ## The wrappers for XMLHttpRequest properties/methods ## */
 
 	/**
 	 * Get the ready state (e.g. `XMLHttpRequest.DONE`)
@@ -580,11 +580,14 @@
 
 	/**
 	 * Send request with predefined method, headers and body.
+	 * 
 	 * 1. Call `this.xhr.open(this.method, this.url, true, this.userName, this.password)`;
-	 * 2. Send headers defined in `this.headers` using `this.xhr.setRequestHeader()`;
-	 * 3. Send request body (`postData` or `this.postData`, if any) using `this.xhr.send()`;
-	 * If `this.method` is empty then it will be set to GET or POST depending on body.
+	 * 2. Send headers defined in `this.headers` by calling `this.xhr.setRequestHeader()`;
+	 * 3. Send request body (`postData` or `this.postData`, if any) by calling `this.xhr.send()`;
+	 * 
+	 * If `this.method` is empty then it will be set to "GET" or "POST" depending on body.
 	 * If the one of the `postData` or `this.postData` is not empty then it will be passed to `this.xhr.send()`.
+	 * 
 	 * @param {*} [postData] The POST body to send with request, if any. It will be used instead of `this.postData`.
 	 * @throws {Error} if `this.url` is empty
 	 * @return {XHR} this
