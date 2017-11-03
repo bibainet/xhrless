@@ -94,6 +94,9 @@ XHR.prototype.setFormCT = function() {
 <a href="javascript:XHR(q+rnd()             ).onSuccess(                                                       ).send();">XHR(url).onSuccess().send()</a>
 <a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(                                                       ).send();">XHR(404).onSuccess().send()</a>
 <a href="javascript:XHR(q+rnd()             ).onSuccess(           showText,        showError      ).onSuccess().send();">XHR(url).onSuccess(showText, showError).onSuccess().send()</a>
+<a href="javascript:XHR(q+rnd()             ).onSuccess(showText, showError, x=>console.log('Done')).send();">XHR(url).onSuccess(showText, showError, log).send()</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(showText, showError, x=>console.log('Done')).send();">XHR(404).onSuccess(showText, showError, log).send()</a>
+<a href="javascript:XHR(q+rnd()             ).onSuccess(null, null, x=>console.log('Done')).send();">XHR(url).onSuccess(null, null, log).send()</a>
 
 <p>With POST:</p>
 <a href="javascript:XHR(q+rnd(), 'q='+rnd()).setFormCT().loadInto(node);">XHR(url, POST string).loadInto()</a>

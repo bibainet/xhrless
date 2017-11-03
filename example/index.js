@@ -64,6 +64,9 @@ const examples = [
 	()=>XHR(url      ).onSuccess(                                                       ).send(),
 	()=>XHR(url_error).onSuccess(                                                       ).send(),
 	()=>XHR(url      ).onSuccess(           showText,       showError       ).onSuccess().send(),
+	()=>XHR(url      ).onSuccess(showText, showError, x=>console.log('Done')).send(),
+	()=>XHR(url_error).onSuccess(showText, showError, x=>console.log('Done')).send(),
+	()=>XHR(url      ).onSuccess(null, null, x=>console.log('Done')).send(),
 
 	// With POST
 	()=>XHR(url, 'q=1234').setFormCT()        .onSuccess(showText, showError).send(),

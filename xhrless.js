@@ -332,14 +332,13 @@
 	 *   alert('Request timed out after '+this.xhr.timeout+'ms');
 	 * }).send();
 	 * ```
-	 * @param {function(XHR)} [handler]
+	 * @param {function(this:XHR,XHR)} [handler]
 	 * @return {XHR} this
 	 */
 	XHR.prototype.onTimeout = function(handler) {
-		if (typeof handler == 'function')
-			this.xhr.ontimeout = (event) => handler.call(this, this);
-		else
-			this.xhr.ontimeout = null;
+		this.xhr.ontimeout = (typeof handler == 'function')
+			? (event) => handler.call(this, this)
+			: null;
 		return this;
 	};
 
@@ -354,21 +353,20 @@
 	 * XHR(url).onChange(function(xhr) {
 	 *   // Request is in progress
 	 *   if (this.isCompleted())
-	 *     // Request is completed
-	 *     if (this.isSuccessResponse())
-	 *       console.log(this.response());
+	 *     // Request completed
+	 *     if (this.isSuccessResponse()) // Check errors
+	 *       console.log('OK:', this.response());
 	 *     else
-	 *       console.warn('Failed');
+	 *       console.warn('Failed:', this.url, this.errorState(true));
 	 * }).send();
 	 * ```
-	 * @param {function(XHR)} [handler]
+	 * @param {function(this:XHR,XHR)} [handler]
 	 * @return {XHR} this
 	 */
 	XHR.prototype.onChange = function(handler) {
-		if (typeof handler == 'function')
-			this.xhr.onreadystatechange = (event) => handler.call(this, this);
-		else
-			this.xhr.onreadystatechange = null;
+		this.xhr.onreadystatechange = (typeof handler == 'function')
+			? (event) => handler.call(this, this)
+			: null;
 		return this;
 	};
 
@@ -382,75 +380,77 @@
 	 * ```javascript
 	 * XHR(url).onReady(xhr => {
 	 *   // Request completed, regardless of errors
-	 *   if (xhr.isSuccessResponse())
-	 *     console.log(xhr.response());
+	 *   if (xhr.isSuccessResponse()) // Check errors
+	 *     console.log('OK:', xhr.response());
 	 *   else
-	 *     console.warn('Failed');
+	 *     console.warn('Failed:', xhr.url, xhr.errorState(true));
 	 * }).send();
 	 * ```
-	 * @param {function(XHR)} [handler]
+	 * @param {function(this:XHR,XHR)} [handler]
 	 * @return {XHR} this
 	 */
 	XHR.prototype.onReady = function(handler) {
-		if (typeof handler == 'function')
-			this.xhr.onreadystatechange = (event) => this.isCompleted() && handler.call(this, this);
-		else
-			this.xhr.onreadystatechange = null;
+		this.xhr.onreadystatechange = (typeof handler == 'function')
+			? (event) => this.isCompleted() && handler.call(this, this)
+			: null;
 		return this;
 	};
 
 	/**
 	 * Set/clear `this.xhr.onreadystatechange` event handlers for `this.xhr.readyState` == `XMLHttpRequest.DONE` event.
-	 * For success responses the successHandler(this) will be called. For error responses the errorHandler(this) will be called.
-	 * Both successHandler and errorHandler can be omitted.
+	 * The successHandler(this) will be called on success. errorHandler(this) will be called on errors. Finally, the finalHandler(this) will always be called.
+	 * All arguments are optional. Call `onSuccess()` with no arguments to clear `this.xhr.onreadystatechange`.
 	 * 
 	 * > See XHR.prototype.isSuccessResponse() for more.
 	 * 
 	 * @example
 	 * ```javascript
-	 * XHR(url).onSuccess(function(xhr) {
+	 * XHR(url).onSuccess(function success(xhr) {
 	 *   // Request completed successfully
-	 *   console.log(this.response());
-	 * }, function(xhr) {
+	 *   console.log('OK:', this.response());
+	 * }, function error(xhr) {
 	 *   // Something failed
-	 *   console.warn(this.url, this.errorState(true));
+	 *   console.warn('Failed:', this.url, this.errorState(true));
+	 * }, function final(xhr) {
+	 *   // Finally:
+	 *   submitButton.disabled = false;
 	 * }).send();
+	 * 
+	 * XHR(url).onSuccess(null, null, xhr => console.log('Completed')).send();
 	 * ```
-	 * @param {function(XHR)} [successHandler]
-	 * @param {function(XHR)} [errorHandler]
+	 * @param {function(this:XHR,XHR)} [successHandler] will be called on success
+	 * @param {function(this:XHR,XHR)} [errorHandler] will be called on errors
+	 * @param {function(this:XHR,XHR)} [finalHandler] will always be called
 	 * @return {XHR} this
 	 */
-	XHR.prototype.onSuccess = function(successHandler, errorHandler) {
-		if ((typeof successHandler == 'function') && (typeof errorHandler == 'function')) {
-			this.xhr.onreadystatechange = (event) => {
-				if (this.isCompleted())
-					if (this.isSuccessResponse())
-						successHandler.call(this, this);
-					else
-						errorHandler.call(this, this);
+	XHR.prototype.onSuccess = function(successHandler, errorHandler, finalHandler) {
+		successHandler = (typeof successHandler == 'function') ? successHandler : null;
+		errorHandler   = (typeof errorHandler   == 'function') ? errorHandler   : null;
+		finalHandler   = (typeof finalHandler   == 'function') ? finalHandler   : null;
+		this.xhr.onreadystatechange = (successHandler || errorHandler || finalHandler) ? (event) => {
+			if (this.isCompleted()) {
+				if (this.isSuccessResponse())
+					successHandler && successHandler.call(this, this);
+				else
+					errorHandler && errorHandler.call(this, this);
+				finalHandler && finalHandler.call(this, this);
 			};
-		} else if (typeof successHandler == 'function') {
-			this.xhr.onreadystatechange = (event) => this.isCompleted() && this.isSuccessResponse() && successHandler.call(this, this);
-		} else if (typeof errorHandler == 'function') {
-			this.xhr.onreadystatechange = (event) => this.isCompleted() && !this.isSuccessResponse() && errorHandler.call(this, this);
-		} else {
-			this.xhr.onreadystatechange = null;
-		};
+		} : null;
 		return this;
 	};
 
 	/**
-	 * Send request and return the Promise.
-	 * The promise will be resolved when request is succeeded. It will be rejected for error responses.
-	 * The XHR instance (`this`) will be passed as first argument to resolve/reject callbacks.
+	 * Send request and return the `Promise` object.
+	 * It will be resolved when request succeeded. It will be rejected for error responses.
+	 * The `XHR` instance (`this`) will be passed to `resolve`/`reject` callbacks.
 	 * 
 	 * > See XHR.prototype.send() and XHR.prototype.isSuccessResponse() for more.
 	 * 
 	 * @example
 	 * ```javascript
 	 * XHR(url).promise()
-	 *   .then(  xhr => console.log(xhr.response()) )
-	 *   .catch( xhr => console.warn(xhr.url, xhr.errorState(true)) );
+	 *   .then(  xhr => console.log('OK:', xhr.responseText()) )
+	 *   .catch( xhr => console.warn('Failed:', xhr.url, xhr.errorState(true)) );
 	 * ```
 	 * @param {*} [postData] The POST body to send with request, if any. It will be used instead of `this.postData`.
 	 * @return {Promise}
