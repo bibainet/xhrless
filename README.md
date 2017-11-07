@@ -106,10 +106,9 @@ Call `.loadInto()` to quickly load the response text into the DOM element.
 
 *@example*  
 ```javascript
-XHR(url).loadInto(document.querySelector('#target'));
-XHR(url).showPreloader(node).loadInto(node);
-XHR(url).loadInto('#target', true, 'Request failed');
-XHR(url).loadInto(node, true, xhr => 'Error: ' + xhr.errorState(true));
+XHR(url).loadInto(document.querySelector('#target'), true, 'Request failed');
+XHR(url).loadInto('#target', 'Loading...', xhr => 'Error: ' + xhr.errorState(true));
+XHR(url).loadInto(inputElement);
 ```
 
 
@@ -456,9 +455,9 @@ from the handler set by `this.onReady()` for example. It always returns 0 if cal
 *@param* `{boolean}` [asString] Return the error message instead of the error code (for simplified debugging)  
 *@return* `{number|string}` Error code (see `XHR.prototype.ERR_*`) or message  
 
-### XHR.prototype.loadInto = function(node, showPreloader, onError) ###
+### XHR.prototype.loadInto = function(element, preloading, onError) ###
 
-Send request, load response result text (`this.xhr.responseText`) into DOM element node.  
+Send request, load response result text (`this.xhr.responseText`) into DOM element (element.value or element.innerHTML).  
 This clears the response type (`this.xhr.responseType`) and overwrites the previously installed event handler.  
 If request fails then onError will be used:  
 If onError is a function then the result of calling onError(this) will be used.  
@@ -470,22 +469,26 @@ If onError is not a function then its value will be used as is.
 *@example*  
 ```javascript
 XHR(url).loadInto(document.querySelector('#target'), true, 'Request failed');
-XHR(url).loadInto('#target', true, xhr => 'Error: ' + xhr.errorState(true));
+XHR(url).loadInto('#target', 'Loading...', xhr => 'Error: ' + xhr.errorState(true));
+XHR(url).loadInto(inputElement);
 ```
-*@param* `{Element|string}` node element object or CSS selector string  
-*@param* `{boolean}` [showPreloader] call `this.showPreloader(node)` before request  
-*@param* `{string|function(XHR)}` [onError] will be used if request fails  
-*@throws* `{Error}` if node is neither an Element instance nor a string or if `document.querySelector(node)` fails  
+*@param* `{Element|string}` element Element instance or CSS selector string  
+*@param* `{boolean|string}` [preloading] If not empty, call `this.showPreloader(element[, preloading])` before request  
+*@param* `{string|function(XHR)}` [onError] Will be used if request fails  
+*@throws* `{Error}` if element is neither an Element instance nor a string or if `document.querySelector(element)` fails  
 *@return* `{XHR}` this  
 
-### XHR.prototype.showPreloader = function(node) ###
+### XHR.prototype.showPreloader = function(element, message) ###
 
-Show preloader `<div class="xhr_preloader"...>` in the DOM element node.  
+Show preloader in the DOM element.  
+Set element.innerHTML = `<div class="xhr_preloader"...>message</div>`. For input elements set element.value = message.  
 It used by `this.loadInto()`. The caller can assign custom implementation to `XHR.prototype.showPreloader`.  
 
 > Requires browser API.  
 
-*@type* `{function(Element|string):XHR}`  
-*@param* `{Element|string}` node element object or CSS selector string  
+*@type* `{function(Element|string,string?):XHR}`  
+*@param* `{Element|string}` element Element instance or CSS selector string  
+*@param* `{string}` [message] Custom 'loading...' message  
+*@throws* `{Error}` if element is neither an Element instance nor a string or if `document.querySelector(element)` fails  
 *@return* `{XHR}` this  
 

@@ -65,18 +65,21 @@ XHR.prototype.setFormCT = function() {
 
 <p>.loadInto():</p>
 <a href="javascript:XHR(q+rnd()).loadInto('#ajaxdiv');">XHR(url).loadInto(selector)</a>
-<a href="javascript:XHR(q+rnd()).loadInto(node, true);">XHR(url).loadInto(node, preload)</a>
-<a href="javascript:XHR().reset(q+rnd()).loadInto('#ajaxdiv', true);">XHR().reset(url).loadInto(selector, preload)</a>
-<a href="javascript:XHR().reset(q+rnd()).showPreloader(node).loadInto(node);">XHR().reset(url).showPreloader().loadInto(node)</a>
-<a href="javascript:XHR(q+rnd()).loadInto('#unexistent', false, 'Error');">XHR(url).loadInto(invalid, false, Error message): throws</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').loadInto(node, true, 'Page<br/>load<br/>error<br/><br/>');">XHR(404).loadInto(node, preload, Error message)</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').loadInto(node, true, xhr => 'Failed:<br/>'+xhr.errorState(true)+'<br/><br/><br/>');">XHR(404).loadInto(node, preload, function)</a>
+<a href="javascript:XHR(q+rnd()).loadInto(node,true);">XHR(url).loadInto(node, true)</a>
+<a href="javascript:XHR(q+rnd()).loadInto('#ajaxdiv','Loading');">XHR(url).loadInto(selector, message)</a>
+<a href="javascript:XHR().reset(q+rnd()).showPreloader(node,'Loading').loadInto(node);">XHR().reset(url).showPreloader(node, message).loadInto(node)</a>
+<a href="javascript:node.innerHTML='<textarea>Text</textarea>';XHR(q+rnd()).loadInto('#ajaxdiv textarea');">XHR(url).loadInto(textarea)</a>
+<a href="javascript:node.innerHTML='<textarea>Text</textarea>';XHR(q+rnd()).loadInto('#ajaxdiv textarea',true);">XHR(url).loadInto(textarea, true)</a>
+<a href="javascript:node.innerHTML='<textarea>Text</textarea>';XHR(q+rnd()).loadInto('#ajaxdiv textarea','Loading');">XHR(url).loadInto(textarea, message)</a>
+<a href="javascript:XHR(q+rnd()).loadInto('#unexistent');">XHR(url).loadInto(invalid): throws</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').loadInto(node,'Loading','Page<br/>load<br/>error<br/><br/>');">XHR(404).loadInto(node, message, Error message)</a>
+<a href="javascript:XHR(q+rnd()+'&amp;error').loadInto(node,true,x=>'Failed:<br/>'+x.errorState(true)+'<br/><br/><br/>');">XHR(404).loadInto(node, true, function)</a>
 
 <p>.onReady().send():</p>
 <a href="javascript:XHR(q+rnd()).onReady(console.log).send();">XHR(url).onReady(console.log).send()</a>
-<a href="javascript:XHR(q+rnd()).onReady(function(){showText(this)}).showPreloader(node).send();">XHR(url).onReady(f(){showText(this)}).showPreloader().send()</a>
-<a href="javascript:XHR(q+rnd()).onReady(x=>showText(x)).showPreloader('#ajaxdiv').send();">XHR(url).onReady(x=>showText(x)).showPreloader().send()</a>
-<a href="javascript:XHR(q+rnd()).onReady(showText).showPreloader('#ajaxdiv').send();">XHR(url).onReady(showText).showPreloader().send()</a>
+<a href="javascript:XHR(q+rnd()).onReady(function(){showText(this)}).showPreloader(node).send();">XHR(url).onReady(f(){showText(this)}).showPreloader(node).send()</a>
+<a href="javascript:XHR(q+rnd()).onReady(x=>showText(x)).showPreloader(node,'Loading').send();">XHR(url).onReady(x=>showText(x)).showPreloader(node, message).send()</a>
+<a href="javascript:XHR(q+rnd()).onReady(showText).showPreloader('#ajaxdiv','Loading').send();">XHR(url).onReady(showText).showPreloader(selector, message).send()</a>
 <a href="javascript:XHR(q+rnd()).onReady(showText).onReady().send();">XHR(url).onReady(showText).onReady().send()</a>
 <a href="javascript:XHR(q+rnd()).onReady(function(){this.isStatusOK()?showText(this):showError(this)}).send();">XHR(url).onReady(f(){isStatusOK()?showText(this):showError(this)}).send()</a>
 <a href="javascript:XHR(q+rnd()+'&amp;error').onReady(function(){this.isStatusOK()?showText(this):showError(this)}).send();">XHR(404).onReady(f(){isStatusOK()?showText(this):showError(this)}).send()</a>

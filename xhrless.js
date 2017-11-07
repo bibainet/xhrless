@@ -107,10 +107,9 @@
  * 
  * @example
  * ```javascript
- * XHR(url).loadInto(document.querySelector('#target'));
- * XHR(url).showPreloader(node).loadInto(node);
- * XHR(url).loadInto('#target', true, 'Request failed');
- * XHR(url).loadInto(node, true, xhr => 'Error: ' + xhr.errorState(true));
+ * XHR(url).loadInto(document.querySelector('#target'), true, 'Request failed');
+ * XHR(url).loadInto('#target', 'Loading...', xhr => 'Error: ' + xhr.errorState(true));
+ * XHR(url).loadInto(inputElement);
  * ```
  * 
  * 
@@ -671,7 +670,7 @@
 		// These methods are available in browser environment only:
 
 		/**
-		 * Send request, load response result text (`this.xhr.responseText`) into DOM element node.
+		 * Send request, load response result text (`this.xhr.responseText`) into DOM element (element.value or element.innerHTML).
 		 * This clears the response type (`this.xhr.responseType`) and overwrites the previously installed event handler.
 		 * If request fails then onError will be used:
 		 * If onError is a function then the result of calling onError(this) will be used.
@@ -683,48 +682,53 @@
 		 * @example
 		 * ```javascript
 		 * XHR(url).loadInto(document.querySelector('#target'), true, 'Request failed');
-		 * XHR(url).loadInto('#target', true, xhr => 'Error: ' + xhr.errorState(true));
+		 * XHR(url).loadInto('#target', 'Loading...', xhr => 'Error: ' + xhr.errorState(true));
+		 * XHR(url).loadInto(inputElement);
 		 * ```
-		 * @param {Element|string} node element object or CSS selector string
-		 * @param {boolean} [showPreloader] call `this.showPreloader(node)` before request
-		 * @param {string|function(XHR)} [onError] will be used if request fails
-		 * @throws {Error} if node is neither an Element instance nor a string or if `document.querySelector(node)` fails
+		 * @param {Element|string} element Element instance or CSS selector string
+		 * @param {boolean|string} [preloading] If not empty, call `this.showPreloader(element[, preloading])` before request
+		 * @param {string|function(XHR)} [onError] Will be used if request fails
+		 * @throws {Error} if element is neither an Element instance nor a string or if `document.querySelector(element)` fails
 		 * @return {XHR} this
 		 */
-		XHR.prototype.loadInto = function(node, showPreloader, onError) {
-			showPreloader && (typeof this.showPreloader == 'function') && this.showPreloader(node);
-			this.responseType('').onReady(function() {
-				if ((typeof node == 'string') && node.length)
-					node = document.querySelector(node);
-				if ((typeof node != 'object') || !(node instanceof Element))
-					throw new Error('Invalid node element / CSS selector');
-				if (this.isStatusOK())
-					node.innerHTML = this.xhr.responseText;
-				else if (typeof onError == 'function')
-					node.innerHTML = onError(this) || '';
-				else
-					node.innerHTML = onError || '';
+		XHR.prototype.loadInto = function(element, preloading, onError) {
+			if ((typeof element == 'string') && element.length)
+				element = document.querySelector(element);
+			if ((typeof element != 'object') || !(element instanceof Element))
+				throw new Error('Invalid element / CSS selector');
+			preloading && this.showPreloader(element, (typeof preloading == 'string') ? preloading : '');
+			return this.responseType('').onReady(function XHR_loadInto_onReady() {
+				// @ts-ignore
+				element[('value' in element) ? 'value' : 'innerHTML'] = this.isStatusOK()
+					? this.xhr.responseText
+					: ((typeof onError == 'function') ? onError(this) : onError) || '';
 			}).send();
-			return this;
 		};
 
 		/**
-		 * Show preloader `<div class="xhr_preloader"...>` in the DOM element node.
+		 * Show preloader in the DOM element.
+		 * Set element.innerHTML = `<div class="xhr_preloader"...>message</div>`. For input elements set element.value = message.
 		 * It used by `this.loadInto()`. The caller can assign custom implementation to `XHR.prototype.showPreloader`.
 		 * 
 		 * > Requires browser API.
 		 * 
-		 * @type {function(Element|string):XHR}
-		 * @param {Element|string} node element object or CSS selector string
+		 * @type {function(Element|string,string?):XHR}
+		 * @param {Element|string} element Element instance or CSS selector string
+		 * @param {string} [message] Custom 'loading...' message
+		 * @throws {Error} if element is neither an Element instance nor a string or if `document.querySelector(element)` fails
 		 * @return {XHR} this
 		 */
-		XHR.prototype.showPreloader = function(node) {
-			if ((typeof node == 'string') && node.length)
-				node = document.querySelector(node);
-			if ((typeof node == 'object') && (node instanceof Element))
-				node.innerHTML = '<div class="xhr_preloader" id="xhr_preloader_' + node.id +
-					'" style="height:' + node.clientHeight + 'px;width:' + node.clientWidth + 'px;' +
-					'margin:0px;padding:0px;"></div>';
+		XHR.prototype.showPreloader = function(element, message) {
+			if ((typeof element == 'string') && element.length)
+				element = document.querySelector(element);
+			if ((typeof element != 'object') || !(element instanceof Element))
+				throw new Error('Invalid element / CSS selector');
+			if (typeof message != 'string')
+				message = '';
+			if ('value' in element)
+				element['value'] = message;
+			else
+				element['innerHTML'] = `<div class="xhr_preloader" id="xhr_preloader_${element.id}" style="height:${element.clientHeight}px;width:${element.clientWidth}px;">${message}</div>`;
 			return this;
 		};
 
