@@ -62,17 +62,15 @@ const examples = [
 	()=>XHR(url      ).onSuccess(           showText                                    ).send(),
 	()=>XHR(url_error).onSuccess(             null,                     showError       ).send(),
 	()=>XHR(url      ).onSuccess(                                                       ).send(),
-	()=>XHR(url_error).onSuccess(                                                       ).send(),
 	()=>XHR(url      ).onSuccess(           showText,       showError       ).onSuccess().send(),
 	()=>XHR(url      ).onSuccess(showText, showError, x=>console.log('Done')).send(),
 	()=>XHR(url_error).onSuccess(showText, showError, x=>console.log('Done')).send(),
 	()=>XHR(url      ).onSuccess(null, null, x=>console.log('Done')).send(),
 
 	// With POST
-	()=>XHR(url, 'q=1234').setFormCT()        .onSuccess(showText, showError).send(),
-	()=>XHR(url).setFormCT()                  .onSuccess(showText, showError).send('q=1234'),
+	()=>XHR(url, 'q=1234')        .setFormCT().onSuccess(showText, showError).send(),
+	()=>XHR(url)                  .setFormCT().onSuccess(showText, showError).send('q=1234'),
 	()=>XHR().reset(url, 'q=1234').setFormCT().onSuccess(showText, showError).send(),
-	()=>XHR().reset(url_error, 'q=1234')      .onSuccess(showText, showError).send(),
 
 	// .responseType('json').onReady().send()
 	()=>XHR(url_json).responseType('json').onReady(jsonReady).send(),

@@ -3,7 +3,7 @@
  * 
  * It is an abstraction layer over the **XMLHttpRequest** v2 API for browser/Node.JS environments.
  * 
- * @version    1.0.4 2017.11.03
+ * @version    1.0.5 2017.11.08
  * @license    MIT
  * @copyright  Copyright © 2017 Alexander Bibanin https://github.com/bibainet
  * 
@@ -133,7 +133,7 @@
 			// @ts-ignore
 			XMLHttpRequest = require('xhr2'); // Omiting var keyword to avoid hoisting: inherit global XMLHttpRequest when in browser API
 			// @ts-ignore
-			(typeof XMLHttpRequest.prototype._restrictedHeaders == 'object') && ['cookie', 'cookie2', 'referer', 'user-agent'].forEach(name => delete(XMLHttpRequest.prototype._restrictedHeaders[name]));
+			(typeof XMLHttpRequest.prototype._restrictedHeaders == 'object') && ['cookie','cookie2','referer','user-agent'].forEach(name => delete(XMLHttpRequest.prototype._restrictedHeaders[name]));
 		} else {
 			throw new Error('XMLHttpRequest is not defined in this environment');
 		};

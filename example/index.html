@@ -8,8 +8,9 @@
 <style type="text/css">
 a { display:block; text-decoration:none; margin:2px 0px; }
 a:hover { text-decoration:underline; }
-div#ajaxdiv { border:solid 1px #888; }
-div.xhr_preloader { background-color:#DDD; }
+#ajaxdiv { border:solid 1px #888; font-size:0.8em; }
+#ajaxdiv .xhr_preloader { background-color:#DDD; }
+#ajaxdiv textarea { width:300px; height:4em; }
 td { vertical-align:top; }
 td>p { margin:0.5em 0px 0; }
 </style>
@@ -95,18 +96,16 @@ XHR.prototype.setFormCT = function() {
 <a href="javascript:XHR(q+rnd()             ).onSuccess(           showText                                    ).send();">XHR(url).onSuccess(showText).send()</a>
 <a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(             null,                     showError       ).send();">XHR(404).onSuccess(null, showError).send()</a>
 <a href="javascript:XHR(q+rnd()             ).onSuccess(                                                       ).send();">XHR(url).onSuccess().send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(                                                       ).send();">XHR(404).onSuccess().send()</a>
 <a href="javascript:XHR(q+rnd()             ).onSuccess(           showText,        showError      ).onSuccess().send();">XHR(url).onSuccess(showText, showError).onSuccess().send()</a>
 <a href="javascript:XHR(q+rnd()             ).onSuccess(showText, showError, x=>console.log('Done')).send();">XHR(url).onSuccess(showText, showError, log).send()</a>
 <a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(showText, showError, x=>console.log('Done')).send();">XHR(404).onSuccess(showText, showError, log).send()</a>
 <a href="javascript:XHR(q+rnd()             ).onSuccess(null, null, x=>console.log('Done')).send();">XHR(url).onSuccess(null, null, log).send()</a>
 
 <p>With POST:</p>
-<a href="javascript:XHR(q+rnd(), 'q='+rnd()).setFormCT().loadInto(node);">XHR(url, POST string).loadInto()</a>
-<a href="javascript:XHR(q+rnd(), postData).loadInto(node);">XHR(url, FormData).loadInto()</a>
-<a href="javascript:XHR(q+rnd())                               .onSuccess(showText, showError).send(postData);">XHR(url).onSuccess(showText, showError).send(FormData);</a>
-<a href="javascript:XHR().reset(q+rnd(), postData)             .onSuccess(showText, showError).send();">XHR().reset(url, FormData).onSuccess(showText, showError).send();</a>
-<a href="javascript:XHR().reset(q+rnd()+'&amp;error', postData).onSuccess(showText, showError).send();">XHR().reset(404, FormData).onSuccess(showText, showError).send();</a>
+<a href="javascript:XHR(q+rnd(), 'q='+rnd()).setFormCT().loadInto(node, true);">XHR(url, POST string).loadInto(node, true)</a>
+<a href="javascript:XHR(q+rnd(), postData).loadInto(node, true);">XHR(url, FormData).loadInto(node, true)</a>
+<a href="javascript:XHR(q+rnd()).onSuccess(showText, showError).send(postData);">XHR(url).onSuccess(showText, showError).send(FormData);</a>
+<a href="javascript:XHR().reset(q+rnd(), postData).onSuccess(showText, showError).send();">XHR().reset(url, FormData).onSuccess(showText, showError).send();</a>
 
 </td><td>
 

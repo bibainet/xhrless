@@ -2,7 +2,7 @@
 
 It is an abstraction layer over the **XMLHttpRequest** v2 API for browser/Node.JS environments.  
 
-*@version*    1.0.4 2017.11.03  
+*@version*    1.0.5 2017.11.08  
 *@license*    MIT  
 *@copyright*  Copyright © 2017 Alexander Bibanin https://github.com/bibainet  
 
