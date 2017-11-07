@@ -161,6 +161,10 @@ XHR.prototype.ERR_HTTPSTATUS = 2; // HTTP response status code is not 2XX
 XHR.prototype.ERR_BODYTYPE   = 3; // Unable to parse the response body according to responseType
 ```
 
+### XHR.prototype.toString = function() ###
+
+Get string representation: method, url, status  
+
 ### XHR.prototype.reset = function(url, postData, method) ###
 
 Set/reset the new URL, method and POST body for the request.  

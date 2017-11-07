@@ -198,6 +198,13 @@
 	XHR.prototype.ERR_BODYTYPE   = 3; // Unable to parse the response body according to responseType
 
 	/**
+	 * Get string representation: method, url, status
+	 */
+	XHR.prototype.toString = function() {
+		return `[object XHR] ${this.method ? this.method : (this.postData ? 'POST' : 'GET')} ${this.url ? this.url : '-'} ${this.readyState()} ${this.status()}`;
+	}
+
+	/**
 	 * Set/reset the new URL, method and POST body for the request.
 	 * 
 	 * > See XHR class constructor for more.
