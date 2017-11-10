@@ -122,12 +122,10 @@
 
 (function(exportName) {
 
-	// Error messages: throw new Error(_errors['key']);
-	var _errors = {
-		err_no_xhr_api: 'XMLHttpRequest is not defined in this environment',
-		err_environment: 'Unsupported environment',
-		err_element_selector: 'Invalid element / CSS selector',
-	};
+	// Error messages: throw new Error(ERR_*);
+	const ERR_NO_XHR_API       = 'XMLHttpRequest is not defined in this environment';
+	const ERR_ENVIRONMENT      = 'Unsupported environment';
+	const ERR_ELEMENT_SELECTOR = 'Invalid element / CSS selector';
 
 	// Detect environment (Browser/Node.JS)
 	const ENV_BROWSER = (typeof window == 'object') && (typeof document == 'object');
@@ -142,7 +140,7 @@
 			// @ts-ignore
 			(typeof XMLHttpRequest.prototype._restrictedHeaders == 'object') && ['cookie','cookie2','referer','user-agent'].forEach(name => delete(XMLHttpRequest.prototype._restrictedHeaders[name]));
 		} else {
-			throw new Error(_errors['err_no_xhr_api']);
+			throw new Error(ERR_NO_XHR_API);
 		};
 	};
 
@@ -708,7 +706,7 @@
 		XHR.prototype.loadInto = function(element, preloading, onError) {
 			(typeof element == 'string') && (element = document.querySelector(element));
 			if ((typeof element != 'object') || !(element instanceof Element))
-				throw new Error(_errors['err_element_selector']);
+				throw new Error(ERR_ELEMENT_SELECTOR);
 			preloading && this.showPreloader(element, (typeof preloading == 'string') ? preloading : '');
 			return this.responseType('').onReady(function XHR_loadInto_onReady() {
 				// @ts-ignore
@@ -734,7 +732,7 @@
 		XHR.prototype.showPreloader = function(element, message) {
 			(typeof element == 'string') && (element = document.querySelector(element));
 			if ((typeof element != 'object') || !(element instanceof Element))
-				throw new Error(_errors['err_element_selector']);
+				throw new Error(ERR_ELEMENT_SELECTOR);
 			if (typeof message != 'string')
 				message = '';
 			if ('value' in element)
@@ -765,7 +763,7 @@
 			// @ts-ignore
 			(typeof formElement == 'string') && (formElement = document.querySelector(formElement));
 			if ((typeof formElement != 'object') || !(formElement instanceof HTMLFormElement))
-				throw new Error(_errors['err_element_selector']);
+				throw new Error(ERR_ELEMENT_SELECTOR);
 			return this.reset(formElement.action, new FormData(formElement), formElement.method || 'POST');
 		}
 
@@ -803,12 +801,8 @@
 	// =========================================================================
 	/* ## Exports ## */
 
-	// Export XHR class constructor
-	if (ENV_BROWSER)
-		window[exportName] = XHR;
-	else if (ENV_NODEJS)
-		module.exports = XHR;
-	else
-		throw new Error(_errors['err_environment']);
+	if (ENV_BROWSER) window[exportName] = XHR;
+	else if (ENV_NODEJS) module.exports = XHR;
+	else throw new Error(ERR_ENVIRONMENT);
 
 })('XHR');
