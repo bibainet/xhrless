@@ -600,13 +600,10 @@
 	 * If the one of the `postData` or `this.postData` is not empty then it will be passed to `this.xhr.send()`.
 	 * 
 	 * @param {*} [postData] The POST body to send with request, if any. It will be used instead of `this.postData`.
-	 * @throws {Error} if `this.url` is empty
 	 * @return {XHR} this
 	 */
 	XHR.prototype.send = function(postData) {
-		if (!this.url) {
-			throw new Error('The request URL is empty');
-		} else if (postData || this.postData) {
+		if (postData || this.postData) {
 			this.xhr.open(this.method || 'POST', this.url, true, this.userName, this.password);
 			for (var key in this.headers) this.xhr.setRequestHeader(key, this.headers[key]);
 			this.xhr.send(postData || this.postData);
