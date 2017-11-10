@@ -8,9 +8,10 @@
 <style type="text/css">
 a { display:block; text-decoration:none; margin:2px 0px; }
 a:hover { text-decoration:underline; }
-#ajaxdiv { border:solid 1px #888; font-size:0.8em; }
+#ajaxdiv { position:fixed; top:0; left:10px; right:10px; border-bottom:solid 1px #888; background-color:#FFF; font-size:0.8em; }
 #ajaxdiv .xhr_preloader { background-color:#DDD; }
 #ajaxdiv textarea { width:300px; height:4em; }
+#examples { margin-top:4em; }
 td { vertical-align:top; }
 td>p { margin:0.5em 0px 0; }
 </style>
@@ -19,10 +20,15 @@ td>p { margin:0.5em 0px 0; }
 
 <div id="ajaxdiv">AJAX<br />response<br />here.<br />Some errors will be sent to console.</div>
 
+<form method="post" action="ajax.php?q=formGET" id="testform"><div style="display:none;">
+<input type="text" name="q" value="formPOST" />
+</div></form>
+
 <script type="text/javascript">
 
 var q = 'ajax.php?q=',
 	node = document.getElementById('ajaxdiv'),
+	form = document.getElementById('testform'),
 	postData = new FormData();
 
 postData.append('q', ''+rnd());
@@ -62,7 +68,7 @@ XHR.prototype.setFormCT = function() {
 
 </script>
 
-<table><tr><td>
+<table id="examples"><tr><td>
 
 <p>.loadInto():</p>
 <a href="javascript:XHR(q+rnd()).loadInto('#ajaxdiv');">XHR(url).loadInto(selector)</a>
@@ -101,11 +107,16 @@ XHR.prototype.setFormCT = function() {
 <a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(showText, showError, x=>console.log('Done')).send();">XHR(404).onSuccess(showText, showError, log).send()</a>
 <a href="javascript:XHR(q+rnd()             ).onSuccess(null, null, x=>console.log('Done')).send();">XHR(url).onSuccess(null, null, log).send()</a>
 
-<p>With POST:</p>
+<p>With POST/form:</p>
 <a href="javascript:XHR(q+rnd(), 'q='+rnd()).setFormCT().loadInto(node, true);">XHR(url, POST string).loadInto(node, true)</a>
 <a href="javascript:XHR(q+rnd(), postData).loadInto(node, true);">XHR(url, FormData).loadInto(node, true)</a>
 <a href="javascript:XHR(q+rnd()).onSuccess(showText, showError).send(postData);">XHR(url).onSuccess(showText, showError).send(FormData);</a>
 <a href="javascript:XHR().reset(q+rnd(), postData).onSuccess(showText, showError).send();">XHR().reset(url, FormData).onSuccess(showText, showError).send();</a>
+<a href="javascript:XHR().loadForm(form).loadInto(node, true);">XHR().loadForm(form).loadInto(node, true)</a>
+<a href="javascript:XHR().loadForm(form).formValue('q').loadInto(node, true);">XHR().loadForm(form).formValue('q').loadInto(node, true)</a>
+<a href="javascript:XHR().loadForm(form).formValue('q', ''+rnd()).loadInto(node, true);">XHR().loadForm(form).formValue('q', rnd).loadInto(node, true)</a>
+<a href="javascript:XHR().loadForm(form).formValue('q').formValue('q', ''+rnd()).loadInto(node, true);">XHR().loadForm(form).formValue('q').formValue('q', rnd).loadInto(node, true)</a>
+<a href="javascript:XHR(q+rnd()).formValue('q', ''+rnd()).loadInto(node, true);">XHR(url).formValue('q', rnd).loadInto(node, true)</a>
 
 </td><td>
 

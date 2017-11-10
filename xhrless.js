@@ -122,6 +122,13 @@
 
 (function(exportName) {
 
+	// Error messages: throw new Error(_errors['key']);
+	var _errors = {
+		err_no_xhr_api: 'XMLHttpRequest is not defined in this environment',
+		err_environment: 'Unsupported environment',
+		err_element_selector: 'Invalid element / CSS selector',
+	};
+
 	// Detect environment (Browser/Node.JS)
 	const ENV_BROWSER = (typeof window == 'object') && (typeof document == 'object');
 	const ENV_NODEJS  = (typeof module == 'object') && (typeof require == 'function');
@@ -135,7 +142,7 @@
 			// @ts-ignore
 			(typeof XMLHttpRequest.prototype._restrictedHeaders == 'object') && ['cookie','cookie2','referer','user-agent'].forEach(name => delete(XMLHttpRequest.prototype._restrictedHeaders[name]));
 		} else {
-			throw new Error('XMLHttpRequest is not defined in this environment');
+			throw new Error(_errors['err_no_xhr_api']);
 		};
 	};
 
@@ -699,10 +706,9 @@
 		 * @return {XHR} this
 		 */
 		XHR.prototype.loadInto = function(element, preloading, onError) {
-			if ((typeof element == 'string') && element.length)
-				element = document.querySelector(element);
+			(typeof element == 'string') && (element = document.querySelector(element));
 			if ((typeof element != 'object') || !(element instanceof Element))
-				throw new Error('Invalid element / CSS selector');
+				throw new Error(_errors['err_element_selector']);
 			preloading && this.showPreloader(element, (typeof preloading == 'string') ? preloading : '');
 			return this.responseType('').onReady(function XHR_loadInto_onReady() {
 				// @ts-ignore
@@ -726,10 +732,9 @@
 		 * @return {XHR} this
 		 */
 		XHR.prototype.showPreloader = function(element, message) {
-			if ((typeof element == 'string') && element.length)
-				element = document.querySelector(element);
+			(typeof element == 'string') && (element = document.querySelector(element));
 			if ((typeof element != 'object') || !(element instanceof Element))
-				throw new Error('Invalid element / CSS selector');
+				throw new Error(_errors['err_element_selector']);
 			if (typeof message != 'string')
 				message = '';
 			if ('value' in element)
@@ -738,6 +743,60 @@
 				element['innerHTML'] = `<div class="xhr_preloader" id="xhr_preloader_${element.id}" style="height:${element.clientHeight}px;width:${element.clientWidth}px;">${message}</div>`;
 			return this;
 		};
+
+		/**
+		 * Load URL, method and request body from HTML form element.
+		 * It calls `this.reset(formElement.action, new FormData(formElement), formElement.method || 'POST')`.
+		 * The request body (this.postData) will always be set to new FormData() regardless of form's method.
+		 * 
+		 * > Requires DOM (browser) API.
+		 * > See XHR.prototype.formValue().
+		 * 
+		 * @example
+		 * ```javascript
+		 * XHR().loadForm(document.querySelector('#form')).formValue('field', 'value').send();
+		 * XHR().loadForm('#form').onSuccess(xhr => console.log('Posted to', xhr.url)).send();
+		 * ```
+		 * @param {HTMLFormElement|string} formElement HTML form element or CSS selector which points to the form
+		 * @throws {Error} if formElement is neither an HTMLFormElement instance nor a string or if `document.querySelector(formElement)` fails
+		 * @return {XHR} this
+		 */
+		XHR.prototype.loadForm = function(formElement) {
+			// @ts-ignore
+			(typeof formElement == 'string') && (formElement = document.querySelector(formElement));
+			if ((typeof formElement != 'object') || !(formElement instanceof HTMLFormElement))
+				throw new Error(_errors['err_element_selector']);
+			return this.reset(formElement.action, new FormData(formElement), formElement.method || 'POST');
+		}
+
+		/**
+		 * Add value into `this.postData` as `FormData`.
+		 * If `this.postData` is not a `FormData` instance then it will be overwritten with `new FormData()`.
+		 * Calling `.formValue()` several times with the same name will append several values under the single name.
+		 * If the value is undefined then all values stored under this name will be deleted.
+		 * Empty names are ignored.
+		 * 
+		 * > Requires DOM (browser) API.
+		 * > See https://developer.mozilla.org/en-US/docs/Web/API/FormData/append for more.
+		 * 
+		 * @param {string} name
+		 * @param {*} [value]
+		 * @param {string} [fileName]
+		 * @return {XHR} this
+		 */
+		XHR.prototype.formValue = function(name, value, fileName) {
+			if ((typeof name != 'string') || !name.length)
+				return this;
+			if ((typeof this.postData != 'object') || !(this.postData instanceof FormData))
+				this.postData = new FormData();
+			if (value === undefined)
+				this.postData.delete(name);
+			else if (typeof fileName == 'string')
+				this.postData.append(name, value, fileName);
+			else
+				this.postData.append(name, value);
+			return this;
+		}
 
 	}; // if (ENV_BROWSER)
 
@@ -750,6 +809,6 @@
 	else if (ENV_NODEJS)
 		module.exports = XHR;
 	else
-		throw new Error('Unsupported environment');
+		throw new Error(_errors['err_environment']);
 
 })('XHR');
