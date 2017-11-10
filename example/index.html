@@ -71,96 +71,96 @@ XHR.prototype.setFormCT = function() {
 <table id="examples"><tr><td>
 
 <p>.loadInto():</p>
-<a href="javascript:XHR(q+rnd()).loadInto('#ajaxdiv');">XHR(url).loadInto(selector)</a>
-<a href="javascript:XHR(q+rnd()).loadInto(node,true);">XHR(url).loadInto(node, true)</a>
-<a href="javascript:XHR(q+rnd()).loadInto('#ajaxdiv','Loading');">XHR(url).loadInto(selector, message)</a>
-<a href="javascript:XHR().reset(q+rnd()).showPreloader(node,'Loading').loadInto(node);">XHR().reset(url).showPreloader(node, message).loadInto(node)</a>
-<a href="javascript:node.innerHTML='<textarea>Text</textarea>';XHR(q+rnd()).loadInto('#ajaxdiv textarea');">XHR(url).loadInto(textarea)</a>
-<a href="javascript:node.innerHTML='<textarea>Text</textarea>';XHR(q+rnd()).loadInto('#ajaxdiv textarea',true);">XHR(url).loadInto(textarea, true)</a>
-<a href="javascript:node.innerHTML='<textarea>Text</textarea>';XHR(q+rnd()).loadInto('#ajaxdiv textarea','Loading');">XHR(url).loadInto(textarea, message)</a>
-<a href="javascript:XHR(q+rnd()).loadInto('#unexistent');">XHR(url).loadInto(invalid): throws</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').loadInto(node,'Loading','Page<br/>load<br/>error<br/><br/>');">XHR(404).loadInto(node, message, Error message)</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').loadInto(node,true,x=>'Failed:<br/>'+x.errorState(true)+'<br/><br/><br/>');">XHR(404).loadInto(node, true, function)</a>
+<a href="#" onclick="XHR(q+rnd()).loadInto('#ajaxdiv');">XHR(url).loadInto(selector)</a>
+<a href="#" onclick="XHR(q+rnd()).loadInto(node,true);">XHR(url).loadInto(node, true)</a>
+<a href="#" onclick="XHR(q+rnd()).loadInto('#ajaxdiv','Loading');">XHR(url).loadInto(selector, message)</a>
+<a href="#" onclick="XHR().reset(q+rnd()).showPreloader(node,'Loading').loadInto(node);">XHR().reset(url).showPreloader(node, message).loadInto(node)</a>
+<a href="#" onclick="node.innerHTML='<textarea>Text</textarea>';XHR(q+rnd()).loadInto('#ajaxdiv textarea');">XHR(url).loadInto(textarea)</a>
+<a href="#" onclick="node.innerHTML='<textarea>Text</textarea>';XHR(q+rnd()).loadInto('#ajaxdiv textarea',true);">XHR(url).loadInto(textarea, true)</a>
+<a href="#" onclick="node.innerHTML='<textarea>Text</textarea>';XHR(q+rnd()).loadInto('#ajaxdiv textarea','Loading');">XHR(url).loadInto(textarea, message)</a>
+<a href="#" onclick="XHR(q+rnd()).loadInto('#unexistent');">XHR(url).loadInto(invalid) (throws)</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;error').loadInto(node,'Loading','Page<br/>load<br/>error<br/><br/>');">XHR(404).loadInto(node, message, Error message)</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;error').loadInto(node,true,x=>'Failed:<br/>'+x.errorState(true)+'<br/><br/><br/>');">XHR(404).loadInto(node, true, function)</a>
 
 <p>.onReady().send():</p>
-<a href="javascript:XHR(q+rnd()).onReady(console.log).send();">XHR(url).onReady(console.log).send()</a>
-<a href="javascript:XHR(q+rnd()).onReady(function(){showText(this)}).showPreloader(node).send();">XHR(url).onReady(f(){showText(this)}).showPreloader(node).send()</a>
-<a href="javascript:XHR(q+rnd()).onReady(x=>showText(x)).showPreloader(node,'Loading').send();">XHR(url).onReady(x=>showText(x)).showPreloader(node, message).send()</a>
-<a href="javascript:XHR(q+rnd()).onReady(showText).showPreloader('#ajaxdiv','Loading').send();">XHR(url).onReady(showText).showPreloader(selector, message).send()</a>
-<a href="javascript:XHR(q+rnd()).onReady(showText).onReady().send();">XHR(url).onReady(showText).onReady().send()</a>
-<a href="javascript:XHR(q+rnd()).onReady(function(){this.isStatusOK()?showText(this):showError(this)}).send();">XHR(url).onReady(f(){isStatusOK()?showText(this):showError(this)}).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').onReady(function(){this.isStatusOK()?showText(this):showError(this)}).send();">XHR(404).onReady(f(){isStatusOK()?showText(this):showError(this)}).send()</a>
-<a href="javascript:XHR(q+rnd()).setTimeout(200).onTimeout(function(){alert('Timed out after '+this.xhr.timeout+'ms')}).loadInto(node, true, x=>'Timed<br/>out<br/>after<br/>'+x.xhr.timeout+'ms');">XHR(url).setTimeout().onTimeout(alert).loadInto(node,true,function)</a>
+<a href="#" onclick="XHR(q+rnd()).onReady(console.log).send();">XHR(url).onReady(console.log).send()</a>
+<a href="#" onclick="XHR(q+rnd()).onReady(function(){showText(this)}).showPreloader(node).send();">XHR(url).onReady(f(){showText(this)}).showPreloader(node).send()</a>
+<a href="#" onclick="XHR(q+rnd()).onReady(x=>showText(x)).showPreloader(node,'Loading').send();">XHR(url).onReady(x=>showText(x)).showPreloader(node, message).send()</a>
+<a href="#" onclick="XHR(q+rnd()).onReady(showText).showPreloader('#ajaxdiv','Loading').send();">XHR(url).onReady(showText).showPreloader(selector, message).send()</a>
+<a href="#" onclick="XHR(q+rnd()).onReady(showText).onReady().send();">XHR(url).onReady(showText).onReady().send()</a>
+<a href="#" onclick="XHR(q+rnd()).onReady(function(){this.isStatusOK()?showText(this):showError(this)}).send();">XHR(url).onReady(f(){isStatusOK()?showText(this):showError(this)}).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;error').onReady(function(){this.isStatusOK()?showText(this):showError(this)}).send();">XHR(404).onReady(f(){isStatusOK()?showText(this):showError(this)}).send()</a>
+<a href="#" onclick="XHR(q+rnd()).setTimeout(200).onTimeout(function(){alert('Timed out after '+this.xhr.timeout+'ms')}).loadInto(node, true, x=>'Timed<br/>out<br/>after<br/>'+x.xhr.timeout+'ms');">XHR(url).setTimeout().onTimeout(alert).loadInto(node,true,function)</a>
 
 <p>.onSuccess().send():</p>
-<a href="javascript:XHR(q+rnd()             ).onSuccess(function(){showText(this)}, function(){showError(this)}).send();">XHR(url).onSuccess(f(){showText(this)}, f(){showError(this)}).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(function(){showText(this)}, function(){showError(this)}).send();">XHR(404).onSuccess(f(){showText(this)}, f(){showError(this)}).send()</a>
-<a href="javascript:XHR(q+rnd()             ).onSuccess(        x=>showText(x),             x=>showError(x)    ).send();">XHR(url).onSuccess(x=>showText(x), x=>showError(x)).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(        x=>showText(x),             x=>showError(x)    ).send();">XHR(404).onSuccess(x=>showText(x), x=>showError(x)).send()</a>
-<a href="javascript:XHR(q+rnd()             ).onSuccess(           showText,                   showError       ).send();">XHR(url).onSuccess(showText, showError).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(           showText,                   showError       ).send();">XHR(404).onSuccess(showText, showError).send()</a>
-<a href="javascript:XHR(q+rnd()             ).onSuccess(           showText                                    ).send();">XHR(url).onSuccess(showText).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(             null,                     showError       ).send();">XHR(404).onSuccess(null, showError).send()</a>
-<a href="javascript:XHR(q+rnd()             ).onSuccess(                                                       ).send();">XHR(url).onSuccess().send()</a>
-<a href="javascript:XHR(q+rnd()             ).onSuccess(           showText,        showError      ).onSuccess().send();">XHR(url).onSuccess(showText, showError).onSuccess().send()</a>
-<a href="javascript:XHR(q+rnd()             ).onSuccess(showText, showError, x=>console.log('Done')).send();">XHR(url).onSuccess(showText, showError, log).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').onSuccess(showText, showError, x=>console.log('Done')).send();">XHR(404).onSuccess(showText, showError, log).send()</a>
-<a href="javascript:XHR(q+rnd()             ).onSuccess(null, null, x=>console.log('Done')).send();">XHR(url).onSuccess(null, null, log).send()</a>
+<a href="#" onclick="XHR(q+rnd()             ).onSuccess(function(){showText(this)}, function(){showError(this)}).send();">XHR(url).onSuccess(f(){showText(this)}, f(){showError(this)}).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;error').onSuccess(function(){showText(this)}, function(){showError(this)}).send();">XHR(404).onSuccess(f(){showText(this)}, f(){showError(this)}).send()</a>
+<a href="#" onclick="XHR(q+rnd()             ).onSuccess(        x=>showText(x),             x=>showError(x)    ).send();">XHR(url).onSuccess(x=>showText(x), x=>showError(x)).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;error').onSuccess(        x=>showText(x),             x=>showError(x)    ).send();">XHR(404).onSuccess(x=>showText(x), x=>showError(x)).send()</a>
+<a href="#" onclick="XHR(q+rnd()             ).onSuccess(           showText,                   showError       ).send();">XHR(url).onSuccess(showText, showError).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;error').onSuccess(           showText,                   showError       ).send();">XHR(404).onSuccess(showText, showError).send()</a>
+<a href="#" onclick="XHR(q+rnd()             ).onSuccess(           showText                                    ).send();">XHR(url).onSuccess(showText).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;error').onSuccess(             null,                     showError       ).send();">XHR(404).onSuccess(null, showError).send()</a>
+<a href="#" onclick="XHR(q+rnd()             ).onSuccess(                                                       ).send();">XHR(url).onSuccess().send()</a>
+<a href="#" onclick="XHR(q+rnd()             ).onSuccess(           showText,        showError      ).onSuccess().send();">XHR(url).onSuccess(showText, showError).onSuccess().send()</a>
+<a href="#" onclick="XHR(q+rnd()             ).onSuccess(showText, showError, x=>console.log('Done')).send();">XHR(url).onSuccess(showText, showError, log).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;error').onSuccess(showText, showError, x=>console.log('Done')).send();">XHR(404).onSuccess(showText, showError, log).send()</a>
+<a href="#" onclick="XHR(q+rnd()             ).onSuccess(null, null, x=>console.log('Done')).send();">XHR(url).onSuccess(null, null, log).send()</a>
 
 <p>With POST/form:</p>
-<a href="javascript:XHR(q+rnd(), 'q='+rnd()).setFormCT().loadInto(node, true);">XHR(url, POST string).loadInto(node, true)</a>
-<a href="javascript:XHR(q+rnd(), postData).loadInto(node, true);">XHR(url, FormData).loadInto(node, true)</a>
-<a href="javascript:XHR(q+rnd()).onSuccess(showText, showError).send(postData);">XHR(url).onSuccess(showText, showError).send(FormData);</a>
-<a href="javascript:XHR().reset(q+rnd(), postData).onSuccess(showText, showError).send();">XHR().reset(url, FormData).onSuccess(showText, showError).send();</a>
-<a href="javascript:XHR().loadForm(form).loadInto(node, true);">XHR().loadForm(form).loadInto(node, true)</a>
-<a href="javascript:XHR().loadForm(form).formValue('q').loadInto(node, true);">XHR().loadForm(form).formValue('q').loadInto(node, true)</a>
-<a href="javascript:XHR().loadForm(form).formValue('q', ''+rnd()).loadInto(node, true);">XHR().loadForm(form).formValue('q', rnd).loadInto(node, true)</a>
-<a href="javascript:XHR().loadForm(form).formValue('q').formValue('q', ''+rnd()).loadInto(node, true);">XHR().loadForm(form).formValue('q').formValue('q', rnd).loadInto(node, true)</a>
-<a href="javascript:XHR(q+rnd()).formValue('q', ''+rnd()).loadInto(node, true);">XHR(url).formValue('q', rnd).loadInto(node, true)</a>
+<a href="#" onclick="XHR(q+rnd(), 'q='+rnd()).setFormCT().loadInto(node, true);">XHR(url, POST string).loadInto(node, true)</a>
+<a href="#" onclick="XHR(q+rnd(), postData).loadInto(node, true);">XHR(url, FormData).loadInto(node, true)</a>
+<a href="#" onclick="XHR(q+rnd()).onSuccess(showText, showError).send(postData);">XHR(url).onSuccess(showText, showError).send(FormData);</a>
+<a href="#" onclick="XHR().reset(q+rnd(), postData).onSuccess(showText, showError).send();">XHR().reset(url, FormData).onSuccess(showText, showError).send();</a>
+<a href="#" onclick="XHR().loadForm(form).loadInto(node, true);">XHR().loadForm(form).loadInto(node, true)</a>
+<a href="#" onclick="XHR().loadForm(form).formValue('q').loadInto(node, true);">XHR().loadForm(form).formValue('q').loadInto(node, true)</a>
+<a href="#" onclick="XHR().loadForm(form).formValue('q', ''+rnd()).loadInto(node, true);">XHR().loadForm(form).formValue('q', rnd).loadInto(node, true)</a>
+<a href="#" onclick="XHR().loadForm(form).formValue('q').formValue('q', ''+rnd()).loadInto(node, true);">XHR().loadForm(form).formValue('q').formValue('q', rnd).loadInto(node, true)</a>
+<a href="#" onclick="XHR(q+rnd()).formValue('q', ''+rnd()).loadInto(node, true);">XHR(url).formValue('q', rnd).loadInto(node, true)</a>
 
 </td><td>
 
 <p>.responseType('json').onReady().send():</p>
-<a href="javascript:XHR(q+rnd()+'&amp;json').responseType('json').onReady(jsonReady).send();">XHR(url_json).responseType('json').onReady(show).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;json', postData).responseType('json').onReady(jsonReady).send();">XHR(url_json, FormData).responseType('json').onReady(show).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;json').onReady(jsonReady).send();">XHR(url_json).onReady(show).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;json&amp;invalid').responseType('json').onReady(jsonReady).send();">XHR(url_json_invalid).responseType('json').onReady(show).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').responseType('json').onReady(jsonReady).send();">XHR(404).responseType('json').onReady(show).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;json').responseType('json').onReady(jsonReady).send();">XHR(url_json).responseType('json').onReady(show).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;json', postData).responseType('json').onReady(jsonReady).send();">XHR(url_json, FormData).responseType('json').onReady(show).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;json').onReady(jsonReady).send();">XHR(url_json).onReady(show).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;json&amp;invalid').responseType('json').onReady(jsonReady).send();">XHR(url_json_invalid).responseType('json').onReady(show).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;error').responseType('json').onReady(jsonReady).send();">XHR(404).responseType('json').onReady(show).send()</a>
 
 <p>.responseType('json').onSuccess().send():</p>
-<a href="javascript:XHR(q+rnd()+'&amp;json').responseType('json').onSuccess(jsonReady, showError).send();">XHR(url_json).responseType('json').onSuccess(show, showError).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;json', postData).responseType('json').onSuccess(jsonReady, showError).send();">XHR(url_json, FormData).responseType('json').onSuccess(show, showError).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;json').onSuccess(jsonReady, showError).send();">XHR(url_json).onSuccess(show, showError).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;json&amp;invalid').responseType('json').onSuccess(jsonReady, showError).send();">XHR(url_json_invalid).responseType('json').onSuccess(show, showError).send()</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').responseType('json').onSuccess(jsonReady, showError).send();">XHR(404).responseType('json').onSuccess(show, showError).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;json').responseType('json').onSuccess(jsonReady, showError).send();">XHR(url_json).responseType('json').onSuccess(show, showError).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;json', postData).responseType('json').onSuccess(jsonReady, showError).send();">XHR(url_json, FormData).responseType('json').onSuccess(show, showError).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;json').onSuccess(jsonReady, showError).send();">XHR(url_json).onSuccess(show, showError).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;json&amp;invalid').responseType('json').onSuccess(jsonReady, showError).send();">XHR(url_json_invalid).responseType('json').onSuccess(show, showError).send()</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;error').responseType('json').onSuccess(jsonReady, showError).send();">XHR(404).responseType('json').onSuccess(show, showError).send()</a>
 
 <p>.promise().then().catch():</p>
-<a href="javascript:XHR(q+rnd())             .promise().then(function(x){showText(x)}).catch(function(x){showError(x)});">XHR(url).promise().then(f(x){showText(x)}).catch(f(x){showError(x)})</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').promise().then(function(x){showText(x)}).catch(function(x){showError(x)});">XHR(404).promise().then(f(x){showText(x)}).catch(f(x){showError(x)})</a>
-<a href="javascript:XHR(q+rnd())             .promise().then(x=>showText(x))          .catch(x=>showError(x));">XHR(url).promise().then(x=>showText(x)).catch(x=>showError(x))</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').promise().then(x=>showText(x))          .catch(x=>showError(x));">XHR(404).promise().then(x=>showText(x)).catch(x=>showError(x))</a>
-<a href="javascript:XHR(q+rnd(), postData)   .promise().then(showText)                .catch(showError);">XHR(url, postData).promise().then(showText).catch(showError)</a>
-<a href="javascript:XHR(q+rnd()).promise(postData)     .then(showText)                .catch(showError);">XHR(url).promise(postData).then(showText).catch(showError)</a>
-<a href="javascript:XHR(q+rnd()+'&amp;error').promise();">XHR(404).promise() (throws)</a>
+<a href="#" onclick="XHR(q+rnd())             .promise().then(function(x){showText(x)}).catch(function(x){showError(x)});">XHR(url).promise().then(f(x){showText(x)}).catch(f(x){showError(x)})</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;error').promise().then(function(x){showText(x)}).catch(function(x){showError(x)});">XHR(404).promise().then(f(x){showText(x)}).catch(f(x){showError(x)})</a>
+<a href="#" onclick="XHR(q+rnd())             .promise().then(x=>showText(x))          .catch(x=>showError(x));">XHR(url).promise().then(x=>showText(x)).catch(x=>showError(x))</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;error').promise().then(x=>showText(x))          .catch(x=>showError(x));">XHR(404).promise().then(x=>showText(x)).catch(x=>showError(x))</a>
+<a href="#" onclick="XHR(q+rnd(), postData)   .promise().then(showText)                .catch(showError);">XHR(url, postData).promise().then(showText).catch(showError)</a>
+<a href="#" onclick="XHR(q+rnd()).promise(postData)     .then(showText)                .catch(showError);">XHR(url).promise(postData).then(showText).catch(showError)</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;error').promise();">XHR(404).promise() (throws)</a>
 
 <p>.promise(), async/await:</p>
-<a href="javascript:awaitResponseAndShow(q+rnd(),            );">try { await XHR(url).promise(); showText(); } catch { showError(); }</a>
-<a href="javascript:awaitResponseAndShow(q+rnd()+'&amp;error');">try { await XHR(404).promise(); showText(); } catch { showError(); }</a>
+<a href="#" onclick="awaitResponseAndShow(q+rnd(),            );">try { await XHR(url).promise(); showText(); } catch { showError(); }</a>
+<a href="#" onclick="awaitResponseAndShow(q+rnd()+'&amp;error');">try { await XHR(404).promise(); showText(); } catch { showError(); }</a>
 
 <p>.abort():</p>
-<a href="javascript:XHR(q+rnd()).onChange(x=>{if (x.readyState()==2) x.abort(); if (x.readyState()==4) if (x.isSuccessResponse()) showText(x); else showError(x);}).send();">XHR(url).onChange(x=>x.abort();showText(x)).send()</a>
-<a href="javascript:var x=XHR(q+rnd()).onSuccess(showText, showError).send(); setTimeout(()=>x.abort(), 200);">x=XHR(url).onSuccess(showText, showError).send(); ... x.abort();</a>
+<a href="#" onclick="XHR(q+rnd()).onChange(x=>{if (x.readyState()==2) x.abort(); if (x.readyState()==4) if (x.isSuccessResponse()) showText(x); else showError(x);}).send();">XHR(url).onChange(x=>x.abort();showText(x)).send()</a>
+<a href="#" onclick="var x=XHR(q+rnd()).onSuccess(showText, showError).send(); setTimeout(()=>x.abort(), 200);">x=XHR(url).onSuccess(showText, showError).send(); ... x.abort();</a>
 
 <p>.setData(), .setHeader(), .setHeaders(), .responseHeaders(), .responseHeader():</p>
-<a href="javascript:XHR(q+rnd()).setData('one', 1).setData('two', 2).setData('three', 3).setData('two').onReady(function(xhr) {node.innerHTML = JSON.stringify(this.data);}).send();">XHR(url).setData()...onReady(print .data).send(): '{one:1,three:3}'</a>
-<a href="javascript:XHR(q+rnd()+'&amp;headers').setHeader('X-One', '1').setHeader('X-Two', '2').setHeader('X-Three', '3').setHeader('X-Two').onSuccess(showText, showError).send();">XHR(url).setHeader()...send(): X-One:1 X-Three:3</a>
-<a href="javascript:XHR(q+rnd()+'&amp;headers').setHeaders({'X-One':'1','X-Two':'','X-Three':'3'}).onSuccess(showText, showError).send();">XHR(url).setHeaders({...}).send(): X-One:1 X-Three:3</a>
-<a href="javascript:XHR(q+rnd()).onSuccess(x=>{node.innerHTML=x.responseHeaders()+'<br/>'+JSON.stringify(x.responseHeaders(true))+'<br/>CT: '+x.responseHeader('Content-type');}, showError).send();">XHR(url).onSuccess(showResponseHeaders).send()</a>
+<a href="#" onclick="XHR(q+rnd()).setData('one', 1).setData('two', 2).setData('three', 3).setData('two').onReady(function(xhr) {node.innerHTML = JSON.stringify(this.data);}).send();">XHR(url).setData()...onReady(print .data).send(): '{one:1,three:3}'</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;headers').setHeader('X-One', '1').setHeader('X-Two', '2').setHeader('X-Three', '3').setHeader('X-Two').onSuccess(showText, showError).send();">XHR(url).setHeader()...send(): X-One:1 X-Three:3</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;headers').setHeaders({'X-One':'1','X-Two':'','X-Three':'3'}).onSuccess(showText, showError).send();">XHR(url).setHeaders({...}).send(): X-One:1 X-Three:3</a>
+<a href="#" onclick="XHR(q+rnd()).onSuccess(x=>{node.innerHTML=x.responseHeaders()+'<br/>'+JSON.stringify(x.responseHeaders(true))+'<br/>CT: '+x.responseHeader('Content-type');}, showError).send();">XHR(url).onSuccess(showResponseHeaders).send()</a>
 
 <p>.setCookie(), .setCookies() (does not work in browser):</p>
-<a href="javascript:XHR(q+rnd()+'&amp;cookies').setCookie('C-One', '1').setCookie('C-Two', '').setCookie('C-Three', '3').onSuccess(showText, showError).send();">XHR(url).setCookie()...send(): C-One=1 C-Three=3</a>
-<a href="javascript:XHR(q+rnd()+'&amp;cookies').setCookies({'C-One':'1','C-Two':'','C-Three':'3'}).onSuccess(showText, showError).send();">XHR(url).setCookies({...})...send(): C-One=1 C-Three=3</a>
-<a href="javascript:XHR(q+rnd()+'&amp;cookies').setCookies({'C-One':'1'}).setCookies().onSuccess(showText, showError).send();">XHR(url).setCookies({...}).setCookies()...send(): empty</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;cookies').setCookie('C-One', '1').setCookie('C-Two', '').setCookie('C-Three', '3').onSuccess(showText, showError).send();">XHR(url).setCookie()...send(): C-One=1 C-Three=3</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;cookies').setCookies({'C-One':'1','C-Two':'','C-Three':'3'}).onSuccess(showText, showError).send();">XHR(url).setCookies({...})...send(): C-One=1 C-Three=3</a>
+<a href="#" onclick="XHR(q+rnd()+'&amp;cookies').setCookies({'C-One':'1'}).setCookies().onSuccess(showText, showError).send();">XHR(url).setCookies({...}).setCookies()...send(): empty</a>
 
 </td></tr></table>
 
