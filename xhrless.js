@@ -1,14 +1,14 @@
 /**
- * # XHRLESS: write less, do more with XMLHttpRequest API. #
+ * # XHRLESS: write less, do more with XMLHttpRequest API. ########################
  * 
  * It is an abstraction layer over the **XMLHttpRequest** v2 API for browser/Node.JS environments.
  * 
- * @version    1.0.5 2017.11.08
+ * @version    1.0.6 2017.11.11
  * @license    MIT
  * @copyright  Copyright © 2017 Alexander Bibanin https://github.com/bibainet
  * 
  * 
- * ## Installation ##
+ * ## Installation ################################################################
  * 
  * On the client side (browser) just include the **xhrless.js** script. The constructor function is now available under the name `XHR`.
  * 
@@ -29,7 +29,7 @@
  * ```
  * 
  * 
- * ## Usage examples ##
+ * ## Usage examples ##############################################################
  * 
  * The only exported name is `XHR`, the constructor function. It returns the `XHR` instance.
  * It can be called as `new XHR(...)` or just as `XHR(...)`, in which case the result of `new XHR(...)` will be returned transparently.
@@ -48,7 +48,9 @@
  *     console.warn('Failed:', this.url, this.errorState(true));
  * }).send(new FormData(document.querySelector('form')));
  * 
- * XHR(url, new FormData(form), 'POST').setData('reqTime', new Date()).onSuccess(xhr => {
+ * XHR(url, new FormData(form), 'POST')
+ * .setData('reqTime', new Date())
+ * .onSuccess(xhr => {
  *   // Request completed successfully
  *   console.log('OK:', xhr.response());
  * }, xhr => {
@@ -61,7 +63,7 @@
  * }).send();
  * ```
  * 
- * ### Fetch JSON ###
+ * ### Fetch JSON #################################################################
  * 
  * Call `.responseType('json')` on `XHR` instance before sending request.
  * When completed, call `.response()` to get the decoded response object.
@@ -75,7 +77,7 @@
  * }).send();
  * ```
  * 
- * ### Using promises ###
+ * ### Using promises #############################################################
  *
  * Call `.promise()` instead of `.send()` to send the request and get the `Promise` object.
  * It will be resolved when request succeeded. It will be rejected for error responses.
@@ -83,11 +85,11 @@
  * @example
  * ```javascript
  * XHR(url).promise()
- *   .then(  xhr => console.log('OK:', xhr.responseText()) )
- *   .catch( xhr => console.warn('Failed:', xhr.url, xhr.errorState(true)) );
+ *   .then( xhr=>console.log('OK:', xhr.responseText()))
+ *   .catch(xhr=>console.warn('Failed:', xhr.url, xhr.errorState(true)));
  * ```
  * 
- * ### XHR instances are reusable ###
+ * ### XHR instances are reusable #################################################
  * 
  * The `XHR` instance, once created, can be reused several times.
  * 
@@ -101,7 +103,7 @@
  * req.send(body2);
  * ```
  * 
- * ### Methods that works in browser only ###
+ * ### Methods that works in browser only (DOM API required) ######################
  * 
  * Call `.loadInto()` to quickly load the response text into the DOM element.
  * 
@@ -112,8 +114,16 @@
  * XHR(url).loadInto(inputElement);
  * ```
  * 
+ * Call `.loadForm()` to load the URL, method and request body from HTML form element.
  * 
- * ## API documentation ##
+ * @example
+ * ```javascript
+ * XHR().loadForm(document.querySelector('#form')).formValue('field', 'value').send();
+ * XHR().loadForm('#form').onSuccess(xhr => console.log('Posted to', xhr.url)).send();
+ * ```
+ * 
+ * 
+ * ## API documentation ###########################################################
  * 
  * The source code is well documented. All exported names has a detailed doc-comment description.
  */
@@ -149,28 +159,28 @@
 	 * 
 	 * It can be called as `new XHR(...)` or just as `XHR(...)`, in which case the result of `new XHR(...)` will be returned transparently.
 	 * 
-	 * All arguments are optional, so they can be set later by calling `XHR.prototype.reset()`.
+	 * All arguments are optional, so they can be set later by calling `XHR.prototype.reset()` or `XHR.prototype.loadForm()`.
 	 * 
 	 * @example
 	 * ```javascript
 	 * XHR(url).send();
 	 * XHR(url, 'data', 'PUT').send();
-	 * XHR().reset(url).send();
-	 * var form = document.querySelector('form');
-	 * XHR(form.action, new FormData(form)).send();
+	 * XHR(formElement.action, new FormData(formElement)).send();
+	 * XHR().loadForm(formElement).send();
+	 * XHR().reset(url, 'data').send();
 	 * ```
 	 * @param {string} [url]      Request URL
-	 * @param {*}      [postData] The POST body to send with request, if any. See `XHR.prototype.send()`.
-	 * @param {string} [method]   Custom request method
+	 * @param {*}      [postData] The request body to send, if any. See `XHR.prototype.send()`.
+	 * @param {string} [method]   Request method
 	 * 
 	 * @property {XMLHttpRequest} xhr      XMLHttpRequest instance. See <https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest> for more.
-	 * @property {string}         method   Custom request method
+	 * @property {string}         method   Request method
 	 * @property {string}         url      Request URL
-	 * @property {*}              postData The POST body to send with request, if any. See `XHR.prototype.send()`.
+	 * @property {*}              postData The request body to send, if any. See `XHR.prototype.send()`.
 	 * @property {string}         userName User name for authentication
 	 * @property {string}         password Password for authentication
 	 * @property {object}         headers  The set of headers to send with request
-	 * @property {object}         data     The set of arbitrary user data key-value pairs associated with object
+	 * @property {object}         data     The set of arbitrary key-value pairs associated with the object. See `XHR.prototype.setData()`.
 	 * 
 	 * @return {XHR} XHR instance
 	 */
@@ -210,13 +220,13 @@
 	}
 
 	/**
-	 * Set/reset the new URL, method and POST body for the request.
+	 * Set/reset the new URL, method and request body (.url, .method and .postData properties).
 	 * 
-	 * > See XHR class constructor for more.
+	 * > See XHR class constructor and XHR.prototype.loadForm() for more.
 	 * 
 	 * @param {string} url        Request URL
-	 * @param {*}      [postData] The POST body to send with request, if any. See `XHR.prototype.send()`.
-	 * @param {string} [method]   Custom request method
+	 * @param {*}      [postData] The request body to send, if any. See `XHR.prototype.send()`.
+	 * @param {string} [method]   Request method
 	 * @return {XHR} this
 	 */
 	XHR.prototype.reset = function(url, postData, method) {
@@ -253,8 +263,8 @@
 
 	/**
 	 * Add name-value pair into `this.data`.
-	 * The name should be a non empty string.
-	 * If the value is undefined then `this.data[name]` will be removed.
+	 * It is a set of arbitrary key-value pairs associated with this instance, it can be referred from callback functions.
+	 * The name should be a non empty string. If the value is undefined then `this.data[name]` will be removed.
 	 * @param {string} name
 	 * @param {*} [value]
 	 * @return {XHR} this
@@ -270,8 +280,7 @@
 
 	/**
 	 * Add HTTP request header into `this.headers`.
-	 * The name should be a non empty string.
-	 * If the value is not a string or it is empty then `this.headers[name]` will be removed.
+	 * The name should be a non empty string. If the value is not a string or it is empty then `this.headers[name]` will be removed.
 	 * @param {string} name
 	 * @param {string} [value]
 	 * @return {XHR} this
@@ -287,7 +296,7 @@
 
 	/**
 	 * Copy name-value pairs from headers object into `this.headers`, non empty strings only.
-	 * All predefined headers will always be removed before copying.
+	 * Current headers will always be removed before copying.
 	 * @param {object} [headers]
 	 * @return {XHR} this
 	 */
@@ -321,8 +330,7 @@
 
 	/**
 	 * Set the "Cookie" request header (`this.headers["Cookie"]`).
-	 * If cookies is a non empty object then copy name-value pairs from it, non empty strings only.
-	 * If not (e.g. undefined) then remove the "Cookie" header.
+	 * If cookies is a non empty object then copy name-value pairs from it, non empty strings only. Otherwise the "Cookie" header will be removed.
 	 * 
 	 * > Requires Node.JS API.
 	 * 
@@ -342,17 +350,15 @@
 		return this;
 	};
 
-	// =========================================================================
+/** ## Event handlers ############################################################## */
 
 	/**
-	 * ## Event handlers ##
-	 * 
 	 * Inside the any event handler the `this` keyword is always referred to `XHR` instance (except arrow functions and promises).
 	 * The first argument for any callback is also an `XHR` instance (the same as `this`).
 	 * It allows the caller to use promises and arrow functions where `this` reference is always inherited from the caller scope.
 	 * 
-	 * The handlers set with `.onChange`, `.onReady`, `.onSuccess`, `.promise` will overwrite each other, because all of them are
-	 * internally assigned to `this.xhr.onreadystatechange`.
+	 * The handlers set with `.onChange`, `.onReady`, `.onSuccess`, `.promise` will overwrite each other,
+	 * because all of them are internally assigned to `this.xhr.onreadystatechange`.
 	 */
 
 	/**
@@ -483,10 +489,10 @@
 	 * @example
 	 * ```javascript
 	 * XHR(url).promise()
-	 *   .then(  xhr => console.log('OK:', xhr.responseText()) )
-	 *   .catch( xhr => console.warn('Failed:', xhr.url, xhr.errorState(true)) );
+	 *   .then( xhr=>console.log('OK:', xhr.responseText()))
+	 *   .catch(xhr=>console.warn('Failed:', xhr.url, xhr.errorState(true)));
 	 * ```
-	 * @param {*} [postData] The POST body to send with request, if any. It will be used instead of `this.postData`.
+	 * @param {*} [postData] The request body to send, if any. It will be used instead of `this.postData`.
 	 * @return {Promise}
 	 */
 	XHR.prototype.promise = function(postData) {
@@ -502,8 +508,7 @@
 		});
 	};
 
-	// =========================================================================
-	/** ## The wrappers for XMLHttpRequest properties/methods ## */
+/** ## The wrappers for XMLHttpRequest properties/methods ########################## */
 
 	/**
 	 * Get the ready state (e.g. `XMLHttpRequest.DONE`)
@@ -590,7 +595,7 @@
 	};
 
 	/**
-	 * Send request with predefined method, headers and body.
+	 * Send request, use predefined URL, method, headers and body.
 	 * 
 	 * 1. Call `this.xhr.open(this.method, this.url, true, this.userName, this.password)`;
 	 * 2. Send headers defined in `this.headers` by calling `this.xhr.setRequestHeader()`;
@@ -599,7 +604,7 @@
 	 * If `this.method` is empty then it will be set to "GET" or "POST" depending on body.
 	 * If the one of the `postData` or `this.postData` is not empty then it will be passed to `this.xhr.send()`.
 	 * 
-	 * @param {*} [postData] The POST body to send with request, if any. It will be used instead of `this.postData`.
+	 * @param {*} [postData] The request body to send, if any. It will be used instead of `this.postData`.
 	 * @return {XHR} this
 	 */
 	XHR.prototype.send = function(postData) {
@@ -625,8 +630,7 @@
 		return this;
 	};
 
-	// =========================================================================
-	/** ## User-level helper methods ## */
+/** ## User-level helper methods ################################################### */
 
 	/**
 	 * Check if request is completed
@@ -654,9 +658,9 @@
 	};
 
 	/**
-	 * Get the reason of request failure, returns the error code (e.g. `XHR.prototype.ERR_HTTPSTATUS`) or 0.
-	 * This should be called when the response is completed (when `this.xhr.readyState` == `XMLHttpRequest.DONE`),
-	 * from the handler set by `this.onReady()` for example. It always returns 0 if called from the handler which was set by `this.onSuccess()`.
+	 * Get the reason of request failure, the error code (e.g. `XHR.prototype.ERR_HTTPSTATUS`) or 0.
+	 * It should be called when the response is completed, from the handler set by `XHR.prototype.onReady()` for example.
+	 * It always returns 0 if called from the handler which was set by `XHR.prototype.onSuccess()`.
 	 * 
 	 * > See XHR.prototype.isStatusOK() and XHR.prototype.isSuccessResponse() for more.
 	 * 
@@ -674,18 +678,18 @@
 			return asString ? 'No error' : this.ERR_NONE;
 	};
 
+/** ## Methods that works in browser only (DOM API required) ####################### */
+
 	if (ENV_BROWSER) {
 
-		// These methods are available in browser environment only:
-
 		/**
-		 * Send request, load response result text (`this.xhr.responseText`) into DOM element (element.value or element.innerHTML).
+		 * Send request, load response result text (`this.xhr.responseText`) into DOM element (`element.value` or `element.innerHTML`).
 		 * This clears the response type (`this.xhr.responseType`) and overwrites the previously installed event handler.
 		 * If request fails then onError will be used:
 		 * If onError is a function then the result of calling onError(this) will be used.
 		 * If onError is not a function then its value will be used as is.
 		 * 
-		 * > Requires browser API.
+		 * > Requires DOM (browser) API.
 		 * > XMLHttpRequest.responseText property is only available when XMLHttpRequest.responseType is "text" or empty.
 		 * 
 		 * @example
@@ -716,9 +720,9 @@
 		/**
 		 * Show preloader in the DOM element.
 		 * Set element.innerHTML = `<div class="xhr_preloader"...>message</div>`. For input elements set element.value = message.
-		 * It used by `this.loadInto()`. The caller can assign custom implementation to `XHR.prototype.showPreloader`.
+		 * It used by `XHR.prototype.loadInto()`. The caller can assign custom implementation to `XHR.prototype.showPreloader`.
 		 * 
-		 * > Requires browser API.
+		 * > Requires DOM (browser) API.
 		 * 
 		 * @type {function(Element|string,string?):XHR}
 		 * @param {Element|string} element Element instance or CSS selector string
@@ -795,8 +799,7 @@
 
 	}; // if (ENV_BROWSER)
 
-	// =========================================================================
-	/* ## Exports ## */
+/* ## Exports ##################################################################### */
 
 	if (ENV_BROWSER) window[exportName] = XHR;
 	else if (ENV_NODEJS) module.exports = XHR;
