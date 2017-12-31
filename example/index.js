@@ -71,6 +71,7 @@ const examples = [
 	()=>XHR(url, 'q=1234')        .setFormCT().onSuccess(showText, showError).send(),
 	()=>XHR(url)                  .setFormCT().onSuccess(showText, showError).send('q=1234'),
 	()=>XHR().reset(url, 'q=1234').setFormCT().onSuccess(showText, showError).send(),
+	()=>XHR(url).loadQuery({q:4567}).onSuccess(showText, showError).send(),
 
 	// .responseType('json').onReady().send()
 	()=>XHR(url_json).responseType('json').onReady(jsonReady).send(),
@@ -113,6 +114,32 @@ const examples = [
 	()=>XHR(url_cookies).setCookie('C-One', '1').setCookie('C-Two', '').setCookie('C-Three', '3').onSuccess(showText, showError).send(), // C-One=1 C-Three=3
 	()=>XHR(url_cookies).setCookies({'C-One':'1','C-Two':'','C-Three':'3'}).onSuccess(showText, showError).send(), // C-One=1 C-Three=3
 	()=>XHR(url_cookies).setCookies({'C-One':'1'}).setCookies().onSuccess(showText, showError).send(), // empty
+
+	// .encodeQuery() (static)
+	()=> {
+	var q = XHR.prototype.encodeQuery({
+		"a0": "A0",  "a1": "A 1",
+		"b": [       "B0",       "B1" ],
+		"c": { "c0": "C0", "c1": "C1" },
+		"d": [       [ "D00", "D01" ],       [ "D10", "D11" ] ],
+		"e": { "e0": { "e00": "E00" }, "e1": { "e10": "E10" } },
+		"f": [       { "f00": "F00" },       { "f10": "F10" } ],
+		"g": { "g0": [ "G00" ],        "g1": { "g10": "G10" } }
+	}, "", "\n", true);
+	console.log(q);
+	console.log('is correct:', q ===
+		"a0=A0\na1=A%201\nb[0]=B0\nb[1]=B1\nc[c0]=C0\nc[c1]=C1\n"+
+		"d[0][0]=D00\nd[0][1]=D01\nd[1][0]=D10\nd[1][1]=D11\n"+
+		"e[e0][e00]=E00\ne[e1][e10]=E10\nf[0][f00]=F00\nf[1][f10]=F10\n"+
+		"g[g0][0]=G00\ng[g1][g10]=G10");
+},
+	()=>console.log(XHR.prototype.encodeQuery({ sum: { min: 100, max: 200 }, filter: { paid: 1, status: ['shipping', 'completed'] } }, '', ' & ', true)),
+	()=>console.log(XHR.prototype.encodeQuery("A",                  '',  ' & ',  true)), // A
+	()=>console.log(XHR.prototype.encodeQuery("A",                 'X',  ' & ',  true)), // X=A
+	()=>console.log(XHR.prototype.encodeQuery(["A", "B"],           '',  ' & ',  true)), // 0=A & 1=B
+	()=>console.log(XHR.prototype.encodeQuery(["A", "B"],          'X',  ' & ',  true)), // X[0]=A & X[1]=B
+	()=>console.log(XHR.prototype.encodeQuery({"a":"A", "b":"B"},   '',  ' & ',  true)), // a=A & b=B
+	()=>console.log(XHR.prototype.encodeQuery({"a":"A", "b":"B"},  'X',  ' & ',  true)), // X[a]=A & X[b]=B
 
 ];
 

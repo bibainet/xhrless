@@ -86,7 +86,30 @@
  * ```javascript
  * XHR(url).promise()
  *   .then( xhr=>console.log('OK:', xhr.responseText()))
- *   .catch(xhr=>console.warn('Failed:', xhr.url, xhr.errorState(true)));
+ *   .catch(xhr=>console.warn('Failed:', xhr.url, xhr.errorState(!0)));
+ * ```
+ * 
+ * ### Sending complex data structures as x-www-form-urlencoded ###################
+ * 
+ * Encode complex object/array to query string, send encoded result in request body
+ * with 'application/x-www-form-urlencoded' content type. On the server side, the
+ * structure will be automatically parsed and restored to it's original state.
+ * Call `.loadQuery()` for that. URL encoding is performed by `.encodeQuery()`.
+ * 
+ * @example
+ * ```javascript
+ * // This will send 'sum[min]=100&sum[max]=200&filter[paid]=1&
+ * // filter[status][0]=shipping&filter[status][1]=completed' request
+ * // with 'Content-Type: application/x-www-form-urlencoded' header
+ * // to '/orders/' endpoint:
+ * var query = {
+ *   sum: { min: 100, max: 200 },
+ *   filter: {
+ *     paid: 1,
+ *     status: ['shipping', 'completed']
+ *   }
+ * };
+ * XHR('/orders/').loadQuery(query).onSuccess(handler).send();
  * ```
  * 
  * ### XHR instances are reusable #################################################
@@ -347,6 +370,37 @@
 			this.headers['Cookie'] = encoded.join('; ');
 		else if (this.headers.hasOwnProperty('Cookie'))
 			delete(this.headers['Cookie']);
+		return this;
+	};
+
+	/**
+	 * Encode complex object/array queryValues to query string (x-www-form-urlencoded) using `XHR.prototype.encodeQuery()`,
+	 * use encoded result as request body (assign it to `this.postData`). Set 'Content-Type: application/x-www-form-urlencoded' header.
+	 * 
+	 * This allows to send complex data structures using the standard x-www-form-urlencoded encoding method.
+	 * On the server side, the structure will be automatically parsed and restored to it's original state.
+	 * 
+	 * > URL-encoded data does not contain any information about types.
+	 * > By default, all primitive values will be decoded as string on server side.
+	 * > See XHR.prototype.encodeQuery() for more.
+	 * 
+	 * @example
+	 * ```javascript
+	 * var query = {
+	 *   sum: { min: 100, max: 200 },
+	 *   filter: {
+	 *     paid: 1,
+	 *     status: ['shipping', 'completed']
+	 *   }
+	* };
+	 * XHR('/orders/').loadQuery(query).onSuccess(handler).send();
+	 * ```
+	 * @param {object|array} queryValues Arbitrary values to send in request body (URL-encoded)
+	 * @return {XHR} this
+	 */
+	XHR.prototype.loadQuery = function(queryValues) {
+		this.postData = XHR.prototype.encodeQuery(queryValues);
+		this.setHeader('Content-Type', 'application/x-www-form-urlencoded');
 		return this;
 	};
 
@@ -669,13 +723,48 @@
 	 */
 	XHR.prototype.errorState = function(asString) {
 		if (!this.status())
-			return asString ? 'Connection failed' : this.ERR_CONNECTION;
+			return asString ? 'Connection failed' : XHR.prototype.ERR_CONNECTION;
 		else if (!this.isStatusOK())
-			return asString ? 'HTTP '+this.status() : this.ERR_HTTPSTATUS;
+			return asString ? 'HTTP '+this.status() : XHR.prototype.ERR_HTTPSTATUS;
 		else if (!this.isSuccessResponse())
-			return asString ? 'Unexpected response body format' : this.ERR_BODYTYPE;
+			return asString ? 'Unexpected response body format' : XHR.prototype.ERR_BODYTYPE;
 		else
-			return asString ? 'No error' : this.ERR_NONE;
+			return asString ? 'No error' : XHR.prototype.ERR_NONE;
+	};
+
+	/**
+	 * Encode arbitrary object/array (recursive) or any plain value to URL query string which is suitable
+	 * for URLs or POST requests with 'application/x-www-form-urlencoded' content type.
+	 * This allows to send complex data structures using the standard x-www-form-urlencoded encoding method.
+	 * 
+	 * > See XHR.prototype.loadQuery().
+	 * 
+	 * @example
+	 * ```javascript
+	 * XHR.prototype.encodeQuery( { "a":"A", "b":"B" } ) == 'a=A&b=B';
+	 * XHR.prototype.encodeQuery( { "a": { "b": { "c":"V1" } }, "d": [ { "e":"V2" } ] }, '', ' & ', true ) == 'a[b][c]=V1 & d[0][e]=V2';
+	 * XHR.prototype.encodeQuery( { "a":"A", "b":"B" }, 'form', '&amp;', true ) == 'form[a]=A&amp;form[b]=B';
+	 * ```
+	 * @static  It can be called directly from prototype without creating object instance
+	 * @param {*} value The value to encode
+	 * @param {string} [prefix] The name (key or index) of the value in parent object, used in recursive calls (see example)
+	 * @param {string} [sep] Resulting query arguments separator (defaults is '&')
+	 * @param {boolean} [rawKeys] Do not URL-encode arguments names (keys), return 'obj[key]=x%20y' instead of 'obj%5Bkey%5D=x%20y'
+	 * @return {string} Query string where arguments are separated by sep or by '&'
+	 */
+	XHR.prototype.encodeQuery = function(value, prefix, sep, rawKeys) {
+		var withPrefix = typeof prefix == 'string' && prefix.length > 0;
+		if (typeof value != 'object')
+			return (withPrefix ? (rawKeys ? prefix : encodeURIComponent(prefix))+'=' : '') + encodeURIComponent(value);
+		var query = [];
+		if (value instanceof Array) {
+			for (var i = 0, l = value.length; i < l; ++i)
+				query.push(XHR.prototype.encodeQuery(value[i], withPrefix ? prefix+'['+i+']' : i.toString(), sep, rawKeys));
+		} else {
+			for (var key in value) if (value.hasOwnProperty(key))
+				query.push(XHR.prototype.encodeQuery(value[key], withPrefix ? prefix+'['+key+']' : key, sep, rawKeys));
+		};
+		return query.join(typeof sep == 'string' && sep.length ? sep : '&');
 	};
 
 /** ## Methods that works in browser only (DOM API required) ####################### */

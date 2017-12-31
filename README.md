@@ -85,7 +85,30 @@ It will be resolved when request succeeded. It will be rejected for error respon
 ```javascript
 XHR(url).promise()
   .then( xhr=>console.log('OK:', xhr.responseText()))
-  .catch(xhr=>console.warn('Failed:', xhr.url, xhr.errorState(true)));
+  .catch(xhr=>console.warn('Failed:', xhr.url, xhr.errorState(!0)));
+```
+
+### Sending complex data structures as x-www-form-urlencoded ###################
+
+Encode complex object/array to query string, send encoded result in request body  
+with 'application/x-www-form-urlencoded' content type. On the server side, the  
+structure will be automatically parsed and restored to it's original state.  
+Call `.loadQuery()` for that. URL encoding is performed by `.encodeQuery()`.  
+
+*@example*  
+```javascript
+// This will send 'sum[min]=100&sum[max]=200&filter[paid]=1&
+// filter[status][0]=shipping&filter[status][1]=completed' request
+// with 'Content-Type: application/x-www-form-urlencoded' header
+// to '/orders/' endpoint:
+var query = {
+  sum: { min: 100, max: 200 },
+  filter: {
+    paid: 1,
+    status: ['shipping', 'completed']
+  }
+};
+XHR('/orders/').loadQuery(query).onSuccess(handler).send();
 ```
 
 ### XHR instances are reusable #################################################
@@ -249,6 +272,32 @@ If cookies is a non empty object then copy name-value pairs from it, non empty s
 > Requires Node.JS API.  
 
 *@param* `{object}` [cookies]  
+*@return* `{XHR}` this  
+
+### XHR.prototype.loadQuery = function(queryValues) ###
+
+Encode complex object/array queryValues to query string (x-www-form-urlencoded) using `XHR.prototype.encodeQuery()`,  
+use encoded result as request body (assign it to `this.postData`). Set 'Content-Type: application/x-www-form-urlencoded' header.  
+
+This allows to send complex data structures using the standard x-www-form-urlencoded encoding method.  
+On the server side, the structure will be automatically parsed and restored to it's original state.  
+
+> URL-encoded data does not contain any information about types.  
+> By default, all primitive values will be decoded as string on server side.  
+> See XHR.prototype.encodeQuery() for more.  
+
+*@example*  
+```javascript
+var query = {
+  sum: { min: 100, max: 200 },
+  filter: {
+    paid: 1,
+    status: ['shipping', 'completed']
+  }
+};
+XHR('/orders/').loadQuery(query).onSuccess(handler).send();
+```
+*@param* `{object|array}` queryValues Arbitrary values to send in request body (URL-encoded)  
 *@return* `{XHR}` this  
 
 ## Event handlers ##############################################################
@@ -465,6 +514,27 @@ It always returns 0 if called from the handler which was set by `XHR.prototype.o
 
 *@param* `{boolean}` [asString] Return the error message instead of the error code (for simplified debugging)  
 *@return* `{number|string}` Error code (see `XHR.prototype.ERR_*`) or message  
+
+### XHR.prototype.encodeQuery = function(value, prefix, sep, rawKeys) ###
+
+Encode arbitrary object/array (recursive) or any plain value to URL query string which is suitable  
+for URLs or POST requests with 'application/x-www-form-urlencoded' content type.  
+This allows to send complex data structures using the standard x-www-form-urlencoded encoding method.  
+
+> See XHR.prototype.loadQuery().  
+
+*@example*  
+```javascript
+XHR.prototype.encodeQuery( { "a":"A", "b":"B" } ) == 'a=A&b=B';
+XHR.prototype.encodeQuery( { "a": { "b": { "c":"V1" } }, "d": [ { "e":"V2" } ] }, '', ' & ', true ) == 'a[b][c]=V1 & d[0][e]=V2';
+XHR.prototype.encodeQuery( { "a":"A", "b":"B" }, 'form', '&amp;', true ) == 'form[a]=A&amp;form[b]=B';
+```
+*@static*  It can be called directly from prototype without creating object instance  
+*@param* `{*}` value The value to encode  
+*@param* `{string}` [prefix] The name (key or index) of the value in parent object, used in recursive calls (see example)  
+*@param* `{string}` [sep] Resulting query arguments separator (defaults is '&')  
+*@param* `{boolean}` [rawKeys] Do not URL-encode arguments names (keys), return 'obj[key]=x%20y' instead of 'obj%5Bkey%5D=x%20y'  
+*@return* `{string}` Query string where arguments are separated by sep or by '&'  
 
 ## Methods that works in browser only (DOM API required) #######################
 

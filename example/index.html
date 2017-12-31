@@ -117,6 +117,7 @@ XHR.prototype.setFormCT = function() {
 <a href="#" onclick="XHR().loadForm(form).formValue('q', ''+rnd()).loadInto(node, true);">XHR().loadForm(form).formValue('q', rnd).loadInto(node, true)</a>
 <a href="#" onclick="XHR().loadForm(form).formValue('q').formValue('q', ''+rnd()).loadInto(node, true);">XHR().loadForm(form).formValue('q').formValue('q', rnd).loadInto(node, true)</a>
 <a href="#" onclick="XHR(q+rnd()).formValue('q', ''+rnd()).loadInto(node, true);">XHR(url).formValue('q', rnd).loadInto(node, true)</a>
+<a href="#" onclick="XHR(q+rnd()).loadQuery({a:[1,2],q:rnd(),b:{c:3}}).loadInto(node, true);">XHR(url).loadQuery({a:[1,2],q:rnd(),b:{c:3}}).loadInto(node, true)</a>
 
 </td><td>
 
@@ -163,6 +164,8 @@ XHR.prototype.setFormCT = function() {
 <a href="#" onclick="XHR(q+rnd()+'&amp;cookies').setCookies({'C-One':'1'}).setCookies().onSuccess(showText, showError).send();">XHR(url).setCookies({...}).setCookies()...send(): empty</a>
 
 </td></tr></table>
+
+<p>... More examples in index.js (Node script)</p>
 
 </body>
 </html>
