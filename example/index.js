@@ -4,7 +4,7 @@
 
 const XHR = require('../xhrless.js');
 
-const url = 'http://localhost/xhrless/example/ajax.php?q='+Math.floor((Math.random()*1e8)),
+const url = 'http://localhost/xhrless/example/ajax.php?q='+Math.floor(Math.random()*1e8),
 	url_error = url + '&error',
 	url_json = url + '&json',
 	url_json_invalid = url_json + '&invalid',
@@ -69,20 +69,20 @@ const examples = [
 
 	// With POST
 	()=>XHR(url, 'q=1234')        .setFormCT().onSuccess(showText, showError).send(),
-	()=>XHR(url)                  .setFormCT().onSuccess(showText, showError).send('q=1234'),
-	()=>XHR().reset(url, 'q=1234').setFormCT().onSuccess(showText, showError).send(),
+	()=>XHR(url)                  .setFormCT().onSuccess(showText, showError).send('q=2345'),
+	()=>XHR().reset(url, 'q=3456').setFormCT().onSuccess(showText, showError).send(),
 	()=>XHR(url).loadQuery({q:4567}).onSuccess(showText, showError).send(),
 
 	// .responseType('json').onReady().send()
 	()=>XHR(url_json).responseType('json').onReady(jsonReady).send(),
-	()=>XHR(url_json, 'q=1234').setFormCT().responseType('json').onReady(jsonReady).send(),
+	()=>XHR(url_json, 'q=5678').setFormCT().responseType('json').onReady(jsonReady).send(),
 	()=>XHR(url_json).onReady(jsonReady).send(),
 	()=>XHR(url_json_invalid).responseType('json').onReady(jsonReady).send(),
 	()=>XHR(url_error).responseType('json').onReady(jsonReady).send(),
 
 	// .responseType('json').onSuccess().send()
 	()=>XHR(url_json).responseType('json').onSuccess(jsonReady, showError).send(),
-	()=>XHR(url_json, 'q=1234').setFormCT().responseType('json').onSuccess(jsonReady, showError).send(),
+	()=>XHR(url_json, 'q=6789').setFormCT().responseType('json').onSuccess(jsonReady, showError).send(),
 	()=>XHR(url_json).onSuccess(jsonReady, showError).send(),
 	()=>XHR(url_json_invalid).responseType('json').onSuccess(jsonReady, showError).send(),
 	()=>XHR(url_error).responseType('json').onSuccess(jsonReady, showError).send(),
@@ -92,8 +92,8 @@ const examples = [
 	()=>XHR(url_error)    .promise().then(function(x){showText(x)}).catch(function(x){showError(x)}),
 	()=>XHR(url)          .promise().then(x=>showText(x))          .catch(x=>showError(x)),
 	()=>XHR(url_error)    .promise().then(x=>showText(x))          .catch(x=>showError(x)),
-	()=>XHR(url, 'q=1234').setFormCT().promise().then(showText).catch(showError),
-	()=>XHR(url).setFormCT().promise('q=1234')  .then(showText).catch(showError),
+	()=>XHR(url, 'q=7890').setFormCT().promise().then(showText).catch(showError),
+	()=>XHR(url).setFormCT().promise('q=0123')  .then(showText).catch(showError),
 	()=>XHR(url_error).promise(), // throws
 
 	// .promise(), async/await

@@ -2,7 +2,7 @@
 
 It is an abstraction layer over the **XMLHttpRequest** v2 API for browser/Node.JS environments.  
 
-*@version*    1.0.6 2017.11.11  
+*@version*    1.0.7 2017.12.31  
 *@license*    MIT  
 *@copyright*  Copyright © 2017 Alexander Bibanin https://github.com/bibainet  
 
@@ -37,8 +37,8 @@ Mostly all of the methods of XHR prototype returns the reference to `XHR` (`this
 
 *@example*  
 ```javascript
-XHR(url).setHeader('X-Test', 'OK').setTimeout(5e3).onTimeout(function(xhr) {
-  alert('Request timed out');
+XHR(url).setHeader('X-Test', 'OK').setTimeout(5e3).onTimeout(xhr => {
+  alert('Request timed out: ' + xhr.url);
 }).onReady(function(xhr) {
   // Request completed, regardless of errors
   if (this.isSuccessResponse()) // Check errors
@@ -118,7 +118,8 @@ The `XHR` instance, once created, can be reused several times.
 *@example*  
 ```javascript
 // Create and configure the XHR instance
-const req = XHR().onReady(handler).setTimeout(5e3).setHeader('X-Test', 'OK');
+const req = XHR().onReady(handler)
+  .setTimeout(5e3).setHeader('X-Test', 'OK');
 // Set/reset target URL, send POST
 req.reset(url).send(body1);
 // Send another POST
@@ -165,9 +166,11 @@ XHR(formElement.action, new FormData(formElement)).send();
 XHR().loadForm(formElement).send();
 XHR().reset(url, 'data').send();
 ```
+*@constructor*  
+
 *@param* `{string}` [url]      Request URL  
 *@param* `{*}`      [postData] The request body to send, if any. See `XHR.prototype.send()`.  
-*@param* `{string}` [method]   Request method  
+*@param* `{string}` [method]   Request method. If no method is set then it will be auto selected before sending the request depending on `this.postData` value.  
 
 *@property* `{XMLHttpRequest}` xhr      XMLHttpRequest instance. See <https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest> for more.  
 *@property* `{string}`         method   Request method  
@@ -185,6 +188,7 @@ XHR().reset(url, 'data').send();
 The error codes returned by `XHR.prototype.errorState()` (the reasons of request failure)  
 
 *@type* `{number}`  
+*@static*  
 
 
 ```javascript
@@ -206,7 +210,7 @@ Set/reset the new URL, method and request body (.url, .method and .postData prop
 
 *@param* `{string}` url        Request URL  
 *@param* `{*}`      [postData] The request body to send, if any. See `XHR.prototype.send()`.  
-*@param* `{string}` [method]   Request method  
+*@param* `{string}` [method]   Request method. If no method is set then it will be auto selected before sending the request depending on `this.postData` value.  
 *@return* `{XHR}` this  
 
 ### XHR.prototype.httpAuth = function(userName, password) ###
@@ -219,9 +223,9 @@ Set/clear the HTTP authentication data
 
 ### XHR.prototype.setTimeout = function(msec) ###
 
-Set/clear request timeout (`this.xhr.timeout`), milliseconds  
+Set/clear request timeout (`this.xhr.timeout`), milliseconds.  
 
-> See XHR.prototype.onTimeout()  
+> See XHR.prototype.onTimeout().  
 
 *@param* `{number}` [msec]  
 *@return* `{XHR}` this  
@@ -239,7 +243,8 @@ The name should be a non empty string. If the value is undefined then `this.data
 ### XHR.prototype.setHeader = function(name, value) ###
 
 Add HTTP request header into `this.headers`.  
-The name should be a non empty string. If the value is not a string or it is empty then `this.headers[name]` will be removed.  
+The name should be a non empty string.  
+If the value is not a string or it is empty then `this.headers[name]` will be removed from the headers list.  
 
 *@param* `{string}` name  
 *@param* `{string}` [value]  
@@ -267,7 +272,8 @@ Both name and value should be a non empty string.
 ### XHR.prototype.setCookies = function(cookies) ###
 
 Set the "Cookie" request header (`this.headers["Cookie"]`).  
-If cookies is a non empty object then copy name-value pairs from it, non empty strings only. Otherwise the "Cookie" header will be removed.  
+If cookies is a non empty object then copy name-value pairs from it, non empty strings only.  
+Otherwise the "Cookie" header will be completely removed from the headers list.  
 
 > Requires Node.JS API.  
 
@@ -311,7 +317,7 @@ because all of them are internally assigned to `this.xhr.onreadystatechange`.
 
 ### XHR.prototype.onTimeout = function(handler) ###
 
-Set/clear request timeout event handler (`this.xhr.ontimeout`)  
+Set/clear request timeout event handler (`this.xhr.ontimeout`).  
 
 > See XHR.prototype.setTimeout().  
 
@@ -387,7 +393,7 @@ XHR(url).onSuccess(function success(xhr) {
   submitButton.disabled = false;
 }).send();
 
-XHR(url).onSuccess(null, null, xhr => console.log('Completed')).send();
+XHR(url).onSuccess(null, null, xhr=>console.log('Completed')).send();
 ```
 *@param* `{function(this:XHR,XHR)}` [successHandler] will be called on success  
 *@param* `{function(this:XHR,XHR)}` [errorHandler] will be called on errors  
@@ -406,7 +412,7 @@ The `XHR` instance (`this`) will be passed to `resolve`/`reject` callbacks.
 ```javascript
 XHR(url).promise()
   .then( xhr=>console.log('OK:', xhr.responseText()))
-  .catch(xhr=>console.warn('Failed:', xhr.url, xhr.errorState(true)));
+  .catch(xhr=>console.warn('Failed:', xhr.url, xhr.errorState(!0)));
 ```
 *@param* `{*}` [postData] The request body to send, if any. It will be used instead of `this.postData`.  
 *@return* `{Promise}`  
@@ -470,7 +476,7 @@ Send request, use predefined URL, method, headers and body.
 2. Send headers defined in `this.headers` by calling `this.xhr.setRequestHeader()`;  
 3. Send request body (`postData` or `this.postData`, if any) by calling `this.xhr.send()`;  
 
-If `this.method` is empty then it will be set to "GET" or "POST" depending on body.  
+If `this.method` is empty then the method will be auto selected from "GET" or "POST" depending on body.  
 If the one of the `postData` or `this.postData` is not empty then it will be passed to `this.xhr.send()`.  
 
 *@param* `{*}` [postData] The request body to send, if any. It will be used instead of `this.postData`.  
