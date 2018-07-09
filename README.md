@@ -2,9 +2,9 @@
 
 It is an abstraction layer over the **XMLHttpRequest** v2 API for browser/Node.JS environments.  
 
-*@version*    1.0.7 2017.12.31  
+*@version*    1.0.8 2018.07.09  
 *@license*    MIT  
-*@copyright*  Copyright © 2017 Alexander Bibanin https://github.com/bibainet  
+*@copyright*  Copyright © 2018 Alexander Bibanin https://github.com/bibainet  
 
 
 ## Installation ################################################################
@@ -36,6 +36,7 @@ Mostly all of the methods of XHR prototype returns the reference to `XHR` (`this
 `xhr = XHR(...).setHeader(...).responseType(...).onSuccess(...).send();`.  
 
 *@example*  
+
 ```javascript
 XHR(url).setHeader('X-Test', 'OK').setTimeout(5e3).onTimeout(xhr => {
   alert('Request timed out: ' + xhr.url);
@@ -68,6 +69,7 @@ Call `.responseType('json')` on `XHR` instance before sending request.
 When completed, call `.response()` to get the decoded response object.  
 
 *@example*  
+
 ```javascript
 XHR(url_json).responseType('json').onSuccess(function success(xhr) {
   console.log('OK:', typeof this.response(), this.response());
@@ -82,6 +84,7 @@ Call `.promise()` instead of `.send()` to send the request and get the `Promise`
 It will be resolved when request succeeded. It will be rejected for error responses.  
 
 *@example*  
+
 ```javascript
 XHR(url).promise()
   .then( xhr=>console.log('OK:', xhr.responseText()))
@@ -96,6 +99,7 @@ structure will be automatically parsed and restored to it's original state.
 Call `.loadQuery()` for that. URL encoding is performed by `.encodeQuery()`.  
 
 *@example*  
+
 ```javascript
 // This will send 'sum[min]=100&sum[max]=200&filter[paid]=1&
 // filter[status][0]=shipping&filter[status][1]=completed' request
@@ -116,6 +120,7 @@ XHR('/orders/').loadQuery(query).onSuccess(handler).send();
 The `XHR` instance, once created, can be reused several times.  
 
 *@example*  
+
 ```javascript
 // Create and configure the XHR instance
 const req = XHR().onReady(handler)
@@ -131,6 +136,7 @@ req.send(body2);
 Call `.loadInto()` to quickly load the response text into the DOM element.  
 
 *@example*  
+
 ```javascript
 XHR(url).loadInto(document.querySelector('#target'), true, 'Request failed');
 XHR(url).loadInto('#target', 'Loading...', xhr => 'Error: ' + xhr.errorState(true));
@@ -140,6 +146,7 @@ XHR(url).loadInto(inputElement);
 Call `.loadForm()` to load the URL, method and request body from HTML form element.  
 
 *@example*  
+
 ```javascript
 XHR().loadForm(document.querySelector('#form')).formValue('field', 'value').send();
 XHR().loadForm('#form').onSuccess(xhr => console.log('Posted to', xhr.url)).send();
@@ -159,6 +166,7 @@ It can be called as `new XHR(...)` or just as `XHR(...)`, in which case the resu
 All arguments are optional, so they can be set later by calling `XHR.prototype.reset()` or `XHR.prototype.loadForm()`.  
 
 *@example*  
+
 ```javascript
 XHR(url).send();
 XHR(url, 'data', 'PUT').send();
@@ -166,6 +174,7 @@ XHR(formElement.action, new FormData(formElement)).send();
 XHR().loadForm(formElement).send();
 XHR().reset(url, 'data').send();
 ```
+
 *@constructor*  
 
 *@param* `{string}` [url]      Request URL  
@@ -178,8 +187,8 @@ XHR().reset(url, 'data').send();
 *@property* `{*}`              postData The request body to send, if any. See `XHR.prototype.send()`.  
 *@property* `{string}`         userName User name for authentication  
 *@property* `{string}`         password Password for authentication  
-*@property* `{object}`         headers  The set of headers to send with request  
-*@property* `{object}`         data     The set of arbitrary key-value pairs associated with the object. See `XHR.prototype.setData()`.  
+*@property* `{Object}`         headers  The set of headers to send with request  
+*@property* `{Object}`         data     The set of arbitrary key-value pairs associated with the object. See `XHR.prototype.setData()`.  
 
 *@return* `{XHR}` XHR instance  
 
@@ -200,7 +209,9 @@ XHR.prototype.ERR_BODYTYPE   = 3; // Unable to parse the response body according
 
 ### XHR.prototype.toString = function() ###
 
-Get string representation: method, url, status  
+Get string representation: '[object XHR] method url readyState status'  
+
+*@return* `{string}`  
 
 ### XHR.prototype.reset = function(url, postData, method) ###
 
@@ -255,7 +266,7 @@ If the value is not a string or it is empty then `this.headers[name]` will be re
 Copy name-value pairs from headers object into `this.headers`, non empty strings only.  
 Current headers will always be removed before copying.  
 
-*@param* `{object}` [headers]  
+*@param* `{Object}` [headers]  
 *@return* `{XHR}` this  
 
 ### XHR.prototype.setCookie = function(name, value) ###
@@ -277,7 +288,7 @@ Otherwise the "Cookie" header will be completely removed from the headers list.
 
 > Requires Node.JS API.  
 
-*@param* `{object}` [cookies]  
+*@param* `{Object}` [cookies]  
 *@return* `{XHR}` this  
 
 ### XHR.prototype.loadQuery = function(queryValues) ###
@@ -293,6 +304,7 @@ On the server side, the structure will be automatically parsed and restored to i
 > See XHR.prototype.encodeQuery() for more.  
 
 *@example*  
+
 ```javascript
 var query = {
   sum: { min: 100, max: 200 },
@@ -303,7 +315,8 @@ var query = {
 };
 XHR('/orders/').loadQuery(query).onSuccess(handler).send();
 ```
-*@param* `{object|array}` queryValues Arbitrary values to send in request body (URL-encoded)  
+
+*@param* `{Object|Array}` queryValues Arbitrary values to send in request body (URL-encoded)  
 *@return* `{XHR}` this  
 
 ## Event handlers ##############################################################
@@ -322,11 +335,13 @@ Set/clear request timeout event handler (`this.xhr.ontimeout`).
 > See XHR.prototype.setTimeout().  
 
 *@example*  
+
 ```javascript
 XHR(url).setTimeout(5e3).onTimeout(function(xhr) {
   alert('Request timed out after '+this.xhr.timeout+'ms');
 }).send();
 ```
+
 *@param* `{function(this:XHR,XHR)}` [handler]  
 *@return* `{XHR}` this  
 
@@ -338,6 +353,7 @@ The handler will be called several times during request, every time when the `th
 > See XHR.prototype.onReady().  
 
 *@example*  
+
 ```javascript
 XHR(url).onChange(function(xhr) {
   // Request is in progress
@@ -349,6 +365,7 @@ XHR(url).onChange(function(xhr) {
       console.warn('Failed:', this.url, this.errorState(true));
 }).send();
 ```
+
 *@param* `{function(this:XHR,XHR)}` [handler]  
 *@return* `{XHR}` this  
 
@@ -360,6 +377,7 @@ The nandler will be called once when the request completes/fails, regardless of 
 > See XHR.prototype.onSuccess().  
 
 *@example*  
+
 ```javascript
 XHR(url).onReady(xhr => {
   // Request completed, regardless of errors
@@ -369,6 +387,7 @@ XHR(url).onReady(xhr => {
     console.warn('Failed:', xhr.url, xhr.errorState(true));
 }).send();
 ```
+
 *@param* `{function(this:XHR,XHR)}` [handler]  
 *@return* `{XHR}` this  
 
@@ -381,6 +400,7 @@ All arguments are optional. Call `onSuccess()` with no arguments to clear `this.
 > See XHR.prototype.isSuccessResponse() for more.  
 
 *@example*  
+
 ```javascript
 XHR(url).onSuccess(function success(xhr) {
   // Request completed successfully
@@ -395,6 +415,7 @@ XHR(url).onSuccess(function success(xhr) {
 
 XHR(url).onSuccess(null, null, xhr=>console.log('Completed')).send();
 ```
+
 *@param* `{function(this:XHR,XHR)}` [successHandler] will be called on success  
 *@param* `{function(this:XHR,XHR)}` [errorHandler] will be called on errors  
 *@param* `{function(this:XHR,XHR)}` [finalHandler] will always be called  
@@ -409,11 +430,13 @@ The `XHR` instance (`this`) will be passed to `resolve`/`reject` callbacks.
 > See XHR.prototype.send() and XHR.prototype.isSuccessResponse() for more.  
 
 *@example*  
+
 ```javascript
 XHR(url).promise()
   .then( xhr=>console.log('OK:', xhr.responseText()))
   .catch(xhr=>console.warn('Failed:', xhr.url, xhr.errorState(!0)));
 ```
+
 *@param* `{*}` [postData] The request body to send, if any. It will be used instead of `this.postData`.  
 *@return* `{Promise}`  
 
@@ -434,10 +457,10 @@ Get the HTTP response status code
 ### XHR.prototype.responseHeaders = function(asObject) ###
 
 Get all response headers (`this.xhr.getAllResponseHeaders()`).  
-Depending on the value of asObject it returns string separated by CRLF or object like {"Key":["Value",],}.  
+Depending on the value of `asObject`, it returns string separated by CRLF or object like {"Key":["Value",],}.  
 
 *@param* `{boolean}` [asObject]  
-*@return* `{string|object}`  
+*@return* `{string|Object}`  
 
 ### XHR.prototype.responseHeader = function(name) ###
 
@@ -530,11 +553,13 @@ This allows to send complex data structures using the standard x-www-form-urlenc
 > See XHR.prototype.loadQuery().  
 
 *@example*  
+
 ```javascript
 XHR.prototype.encodeQuery( { "a":"A", "b":"B" } ) == 'a=A&b=B';
 XHR.prototype.encodeQuery( { "a": { "b": { "c":"V1" } }, "d": [ { "e":"V2" } ] }, '', ' & ', true ) == 'a[b][c]=V1 & d[0][e]=V2';
 XHR.prototype.encodeQuery( { "a":"A", "b":"B" }, 'form', '&amp;', true ) == 'form[a]=A&amp;form[b]=B';
 ```
+
 *@static*  It can be called directly from prototype without creating object instance  
 *@param* `{*}` value The value to encode  
 *@param* `{string}` [prefix] The name (key or index) of the value in parent object, used in recursive calls (see example)  
@@ -556,11 +581,13 @@ If onError is not a function then its value will be used as is.
 > XMLHttpRequest.responseText property is only available when XMLHttpRequest.responseType is "text" or empty.  
 
 *@example*  
+
 ```javascript
 XHR(url).loadInto(document.querySelector('#target'), true, 'Request failed');
 XHR(url).loadInto('#target', 'Loading...', xhr => 'Error: ' + xhr.errorState(true));
 XHR(url).loadInto(inputElement);
 ```
+
 *@param* `{Element|string}` element Element instance or CSS selector string  
 *@param* `{boolean|string}` [preloading] If not empty, call `this.showPreloader(element[, preloading])` before request  
 *@param* `{string|function(XHR)}` [onError] Will be used if request fails  
@@ -591,10 +618,12 @@ The request body (this.postData) will always be set to new FormData() regardless
 > See XHR.prototype.formValue().  
 
 *@example*  
+
 ```javascript
 XHR().loadForm(document.querySelector('#form')).formValue('field', 'value').send();
 XHR().loadForm('#form').onSuccess(xhr => console.log('Posted to', xhr.url)).send();
 ```
+
 *@param* `{HTMLFormElement|string}` formElement HTML form element or CSS selector which points to the form  
 *@throws* `{Error}` if formElement is neither an HTMLFormElement instance nor a string or if `document.querySelector(formElement)` fails  
 *@return* `{XHR}` this  
