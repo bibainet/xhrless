@@ -348,11 +348,12 @@
 	 * @return {XHR} this
 	 */
 	XHR.prototype.setCookie = function(name, value) {
-		if ((typeof name == 'string') && name.length && (typeof value == 'string') && value.length)
+		if ((typeof name == 'string') && name.length && (typeof value == 'string') && value.length) try {
 			if ('Cookie' in this.headers)
 				this.headers['Cookie'] += '; ' + name + '=' + encodeURIComponent(value);
 			else
 				this.headers['Cookie'] = name + '=' + encodeURIComponent(value);
+		} catch (_) {};
 		return this;
 	};
 
@@ -370,8 +371,9 @@
 		var encoded = [];
 		if (typeof cookies == 'object')
 			for (var name in cookies)
-				if (cookies.hasOwnProperty(name) && (typeof cookies[name] == 'string') && cookies[name].length)
+				if (cookies.hasOwnProperty(name) && (typeof cookies[name] == 'string') && cookies[name].length) try {
 					encoded.push(name + '=' + encodeURIComponent(cookies[name]));
+				} catch (_) {};
 		if (encoded.length)
 			this.headers['Cookie'] = encoded.join('; ');
 		else if (this.headers.hasOwnProperty('Cookie'))
@@ -760,8 +762,11 @@
 	 */
 	XHR.prototype.encodeQuery = function(value, prefix, sep, rawKeys) {
 		var withPrefix = typeof prefix == 'string' && prefix.length > 0;
-		if (typeof value != 'object')
+		if (typeof value != 'object') try {
 			return (withPrefix ? (rawKeys ? prefix : encodeURIComponent(prefix))+'=' : '') + encodeURIComponent(value);
+		} catch (_) {
+			return '';
+		};
 		var query = [];
 		if (value instanceof Array) {
 			for (var i = 0, l = value.length; i < l; ++i)
