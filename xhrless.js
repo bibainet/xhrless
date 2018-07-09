@@ -162,17 +162,17 @@
 	const ERR_ELEMENT_SELECTOR = 'Invalid element / CSS selector';
 
 	// Detect environment (Browser/Node.JS)
-	const ENV_BROWSER = (typeof window == 'object') && (typeof document == 'object');
-	const ENV_NODEJS  = (typeof module == 'object') && (typeof require == 'function');
+	const ENV_BROWSER = (typeof window === 'object') && (typeof document === 'object');
+	const ENV_NODEJS  = (typeof module === 'object') && (typeof require === 'function');
 
-	// Check XMLHttpRequest API
-	if (typeof XMLHttpRequest == 'undefined') {
+	// Check XMLHttpRequest API / load Node.JS XMLHttpRequest API implementation
+	if (typeof XMLHttpRequest === 'undefined') {
 		if (ENV_NODEJS) {
 			// Load "xhr2" module implementing XMLHttpRequest v2 API for Node.JS
 			// @ts-ignore
 			XMLHttpRequest = require('xhr2'); // Omiting var keyword to avoid hoisting: inherit global XMLHttpRequest when in browser API
 			// @ts-ignore
-			(typeof XMLHttpRequest.prototype._restrictedHeaders == 'object') && ['cookie','cookie2','referer','user-agent'].forEach(name => delete(XMLHttpRequest.prototype._restrictedHeaders[name]));
+			(typeof XMLHttpRequest.prototype._restrictedHeaders === 'object') && ['cookie','cookie2','referer','user-agent'].forEach(name => delete(XMLHttpRequest.prototype._restrictedHeaders[name]));
 		} else {
 			throw new Error(ERR_NO_XHR_API);
 		};
@@ -212,7 +212,7 @@
 	 */
 	var XHR = function(url, postData, method) {
 		// If called without the `new` keyword then auto create object calling `new XHR()` and return it
-		if ((typeof this != 'object') || !(this instanceof XHR))
+		if ((typeof this !== 'object') || !(this instanceof XHR))
 			return new XHR(url, postData, method);
 		// Called with new keyword
 		this.xhr      = new XMLHttpRequest();
@@ -284,7 +284,7 @@
 	 * @return {XHR} this
 	 */
 	XHR.prototype.setTimeout = function(msec) {
-		this.xhr.timeout = (typeof msec == 'number') && msec > 0 ? msec : 0;
+		this.xhr.timeout = (typeof msec === 'number') && msec > 0 ? msec : 0;
 		return this;
 	};
 
@@ -297,7 +297,7 @@
 	 * @return {XHR} this
 	 */
 	XHR.prototype.setData = function(name, value) {
-		if ((typeof name == 'string') && name.length)
+		if (typeof name === 'string' && name.length)
 			if (value !== undefined)
 				this.data[name] = value;
 			else if (this.data.hasOwnProperty(name))
@@ -314,8 +314,8 @@
 	 * @return {XHR} this
 	 */
 	XHR.prototype.setHeader = function(name, value) {
-		if ((typeof name == 'string') && name.length)
-			if ((typeof value == 'string') && value.length)
+		if (typeof name === 'string' && name.length)
+			if (typeof value === 'string' && value.length)
 				this.headers[name] = value;
 			else if (this.headers.hasOwnProperty(name))
 				delete(this.headers[name]);
@@ -330,9 +330,9 @@
 	 */
 	XHR.prototype.setHeaders = function(headers) {
 		this.headers = {};
-		if (typeof headers == 'object')
+		if (typeof headers === 'object')
 			for (var name in headers)
-				if (headers.hasOwnProperty(name) && (typeof headers[name] == 'string') && headers[name].length)
+				if (headers.hasOwnProperty(name) && typeof headers[name] === 'string' && headers[name].length)
 					this.headers[name] = headers[name];
 		return this;
 	};
@@ -348,7 +348,7 @@
 	 * @return {XHR} this
 	 */
 	XHR.prototype.setCookie = function(name, value) {
-		if ((typeof name == 'string') && name.length && (typeof value == 'string') && value.length) try {
+		if (typeof name === 'string' && name.length && typeof value === 'string' && value.length) try {
 			if ('Cookie' in this.headers)
 				this.headers['Cookie'] += '; ' + name + '=' + encodeURIComponent(value);
 			else
@@ -369,9 +369,9 @@
 	 */
 	XHR.prototype.setCookies = function(cookies) {
 		var encoded = [];
-		if (typeof cookies == 'object')
+		if (typeof cookies === 'object')
 			for (var name in cookies)
-				if (cookies.hasOwnProperty(name) && (typeof cookies[name] == 'string') && cookies[name].length) try {
+				if (cookies.hasOwnProperty(name) && typeof cookies[name] === 'string' && cookies[name].length) try {
 					encoded.push(name + '=' + encodeURIComponent(cookies[name]));
 				} catch (_) {};
 		if (encoded.length)
@@ -438,7 +438,7 @@
 	 * @return {XHR} this
 	 */
 	XHR.prototype.onTimeout = function(handler) {
-		this.xhr.ontimeout = (typeof handler == 'function')
+		this.xhr.ontimeout = (typeof handler === 'function')
 			? (event) => handler.call(this, this)
 			: null;
 		return this;
@@ -466,7 +466,7 @@
 	 * @return {XHR} this
 	 */
 	XHR.prototype.onChange = function(handler) {
-		this.xhr.onreadystatechange = (typeof handler == 'function')
+		this.xhr.onreadystatechange = (typeof handler === 'function')
 			? (event) => handler.call(this, this)
 			: null;
 		return this;
@@ -492,7 +492,7 @@
 	 * @return {XHR} this
 	 */
 	XHR.prototype.onReady = function(handler) {
-		this.xhr.onreadystatechange = (typeof handler == 'function')
+		this.xhr.onreadystatechange = (typeof handler === 'function')
 			? (event) => this.isCompleted() && handler.call(this, this)
 			: null;
 		return this;
@@ -526,9 +526,9 @@
 	 * @return {XHR} this
 	 */
 	XHR.prototype.onSuccess = function(successHandler, errorHandler, finalHandler) {
-		successHandler = (typeof successHandler == 'function') ? successHandler : null;
-		errorHandler   = (typeof errorHandler   == 'function') ? errorHandler   : null;
-		finalHandler   = (typeof finalHandler   == 'function') ? finalHandler   : null;
+		successHandler = (typeof successHandler === 'function') ? successHandler : null;
+		errorHandler   = (typeof errorHandler   === 'function') ? errorHandler   : null;
+		finalHandler   = (typeof finalHandler   === 'function') ? finalHandler   : null;
 		this.xhr.onreadystatechange = (successHandler || errorHandler || finalHandler) ? (event) => {
 			if (this.isCompleted()) {
 				if (this.isSuccessResponse())
@@ -649,7 +649,7 @@
 	 * @return {XHR} this
 	 */
 	XHR.prototype.responseType = function(value) {
-		if (typeof value != 'string')
+		if (typeof value !== 'string')
 			// @ts-ignore
 			return this.xhr.responseType;
 		this.xhr.responseType = value;
@@ -761,8 +761,8 @@
 	 * @return {string} Query string where arguments are separated by sep or by '&'
 	 */
 	XHR.prototype.encodeQuery = function(value, prefix, sep, rawKeys) {
-		var withPrefix = typeof prefix == 'string' && prefix.length > 0;
-		if (typeof value != 'object') try {
+		var withPrefix = typeof prefix === 'string' && prefix.length > 0;
+		if (typeof value !== 'object') try {
 			return (withPrefix ? (rawKeys ? prefix : encodeURIComponent(prefix))+'=' : '') + encodeURIComponent(value);
 		} catch (_) {
 			return '';
@@ -775,7 +775,7 @@
 			for (var key in value) if (value.hasOwnProperty(key))
 				query.push(XHR.prototype.encodeQuery(value[key], withPrefix ? prefix+'['+key+']' : key, sep, rawKeys));
 		};
-		return query.join(typeof sep == 'string' && sep.length ? sep : '&');
+		return query.join(typeof sep === 'string' && sep.length ? sep : '&');
 	};
 
 /** ## Methods that works in browser only (DOM API required) ####################### */
@@ -805,10 +805,10 @@
 		 * @return {XHR} this
 		 */
 		XHR.prototype.loadInto = function(element, preloading, onError) {
-			(typeof element == 'string') && (element = document.querySelector(element));
-			if ((typeof element != 'object') || !(element instanceof Element))
+			(typeof element === 'string') && (element = document.querySelector(element));
+			if ((typeof element !== 'object') || !(element instanceof Element))
 				throw new Error(ERR_ELEMENT_SELECTOR);
-			preloading && this.showPreloader(element, (typeof preloading == 'string') ? preloading : '');
+			preloading && this.showPreloader(element, (typeof preloading === 'string') ? preloading : '');
 			return this.responseType('').onReady(function XHR_loadInto_onReady() {
 				// @ts-ignore
 				element[('value' in element) ? 'value' : 'innerHTML'] = this.isStatusOK()
@@ -831,10 +831,10 @@
 		 * @return {XHR} this
 		 */
 		XHR.prototype.showPreloader = function(element, message) {
-			(typeof element == 'string') && (element = document.querySelector(element));
-			if ((typeof element != 'object') || !(element instanceof Element))
+			(typeof element === 'string') && (element = document.querySelector(element));
+			if ((typeof element !== 'object') || !(element instanceof Element))
 				throw new Error(ERR_ELEMENT_SELECTOR);
-			if (typeof message != 'string')
+			if (typeof message !== 'string')
 				message = '';
 			if ('value' in element)
 				element['value'] = message;
@@ -862,8 +862,8 @@
 		 */
 		XHR.prototype.loadForm = function(formElement) {
 			// @ts-ignore
-			(typeof formElement == 'string') && (formElement = document.querySelector(formElement));
-			if ((typeof formElement != 'object') || !(formElement instanceof HTMLFormElement))
+			(typeof formElement === 'string') && (formElement = document.querySelector(formElement));
+			if ((typeof formElement !== 'object') || !(formElement instanceof HTMLFormElement))
 				throw new Error(ERR_ELEMENT_SELECTOR);
 			return this.reset(formElement.action, new FormData(formElement), formElement.method || 'POST');
 		}
@@ -884,13 +884,13 @@
 		 * @return {XHR} this
 		 */
 		XHR.prototype.formValue = function(name, value, fileName) {
-			if ((typeof name != 'string') || !name.length)
+			if ((typeof name !== 'string') || !name.length)
 				return this;
-			if ((typeof this.postData != 'object') || !(this.postData instanceof FormData))
+			if ((typeof this.postData !== 'object') || !(this.postData instanceof FormData))
 				this.postData = new FormData();
 			if (value === undefined)
 				this.postData.delete(name);
-			else if (typeof fileName == 'string')
+			else if (typeof fileName === 'string')
 				this.postData.append(name, value, fileName);
 			else
 				this.postData.append(name, value);
