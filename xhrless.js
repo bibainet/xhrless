@@ -1,9 +1,9 @@
 /**
  * # XHRLESS: write less, do more with XMLHttpRequest API. ########################
  * 
- * It is an abstraction layer over the **XMLHttpRequest** v2 API for browser/Node.JS environments.
+ * It is an abstraction layer over the XMLHttpRequest v2 API for browser/Node.JS.
  * 
- * @version    1.0.8 2018.07.09
+ * @version    1.0.9 2018.07.12
  * @license    MIT
  * @copyright  Copyright © 2018 Alexander Bibanin https://github.com/bibainet
  * 
@@ -892,7 +892,7 @@
 			if ((typeof formElement !== 'object') || !(formElement instanceof HTMLFormElement))
 				throw new Error(ERR_ELEMENT_SELECTOR);
 			return this.reset(formElement.action, new FormData(formElement), formElement.method || 'POST');
-		}
+		};
 
 		/**
 		 * Add value into `this.postData` as `FormData`.
@@ -921,7 +921,7 @@
 			else
 				this.postData.append(name, value);
 			return this;
-		}
+		};
 
 	}; // if (ENV_BROWSER)
 

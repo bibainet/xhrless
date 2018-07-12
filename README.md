@@ -1,8 +1,8 @@
 # XHRLESS: write less, do more with XMLHttpRequest API. ########################
 
-It is an abstraction layer over the **XMLHttpRequest** v2 API for browser/Node.JS environments.  
+It is an abstraction layer over the XMLHttpRequest v2 API for browser/Node.JS.  
 
-*@version*    1.0.8 2018.07.09  
+*@version*    1.0.9 2018.07.12  
 *@license*    MIT  
 *@copyright*  Copyright © 2018 Alexander Bibanin https://github.com/bibainet  
 
@@ -157,7 +157,7 @@ XHR().loadForm('#form').onSuccess(xhr => console.log('Posted to', xhr.url)).send
 
 The source code is well documented. All exported names has a detailed doc-comment description.  
 
-### var XHR = function(url, postData, method) ###
+### function XHR(url, postData, method) ###
 
 `XHR` class constructor. Creates the `XHR` instance.  
 
@@ -198,7 +198,6 @@ The error codes returned by `XHR.prototype.errorState()` (the reasons of request
 
 *@type* `{number}`  
 *@static*  
-
 
 ```javascript
 XHR.prototype.ERR_NONE       = 0; // No error
