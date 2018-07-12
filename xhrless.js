@@ -164,25 +164,23 @@
 (function(exportName) {
 
 	// Error messages: throw new Error(ERR_*);
-	const ERR_NO_XHR_API       = 'XMLHttpRequest is not defined in this environment';
-	const ERR_ENVIRONMENT      = 'Unsupported environment';
 	const ERR_ELEMENT_SELECTOR = 'Invalid element / CSS selector';
 
 	// Detect environment (Browser/Node.JS)
 	const ENV_BROWSER = (typeof window === 'object') && (typeof document === 'object');
 	const ENV_NODEJS  = (typeof module === 'object') && (typeof require === 'function');
 
-	// Check XMLHttpRequest API / load Node.JS XMLHttpRequest API implementation
-	if (typeof XMLHttpRequest === 'undefined') {
-		if (ENV_NODEJS) {
-			// Load "xhr2" module implementing XMLHttpRequest v2 API for Node.JS
-			// @ts-ignore
-			XMLHttpRequest = require('xhr2'); // Omiting var keyword to avoid hoisting: inherit global XMLHttpRequest when in browser API
-			// @ts-ignore
-			(typeof XMLHttpRequest.prototype._restrictedHeaders === 'object') && ['cookie','cookie2','referer','user-agent'].forEach(name => delete(XMLHttpRequest.prototype._restrictedHeaders[name]));
-		} else {
-			throw new Error(ERR_NO_XHR_API);
-		};
+	// Load XMLHttpRequest API, export `XHR`
+	var XMLHttpRequest;
+	if (ENV_BROWSER) {
+		XMLHttpRequest = window['XMLHttpRequest'];
+		window[exportName] = XHR;
+	} else if (ENV_NODEJS) {
+		XMLHttpRequest = require('xhr2');
+		(typeof XMLHttpRequest.prototype._restrictedHeaders === 'object') && ['cookie','cookie2','referer','user-agent'].forEach(name => delete(XMLHttpRequest.prototype._restrictedHeaders[name]));
+		exports = module.exports = XHR;
+	} else {
+		throw new Error('Unsupported environment');
 	};
 
 	/**
@@ -219,7 +217,7 @@
 	 * 
 	 * @return {XHR} XHR instance
 	 */
-	var XHR = function(url, postData, method) {
+	function XHR(url, postData, method) {
 		// If called without the `new` keyword then auto create object calling `new XHR()` and return it
 		if ((typeof this !== 'object') || !(this instanceof XHR))
 			return new XHR(url, postData, method);
@@ -926,11 +924,5 @@
 		}
 
 	}; // if (ENV_BROWSER)
-
-/* ## Exports ##################################################################### */
-
-	if (ENV_BROWSER) window[exportName] = XHR;
-	else if (ENV_NODEJS) module.exports = XHR;
-	else throw new Error(ERR_ENVIRONMENT);
 
 })('XHR');
